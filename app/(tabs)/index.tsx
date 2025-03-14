@@ -6,6 +6,8 @@ import { Image } from 'react-native';
 import HomeScreen from './HomeScreen'; // Create this screen
 import LoginScreen from './LoginScreen'; // Create this screen
 import RegisterScreen from './RegisterScreen'; // Create this screen
+import ChatScreen from './ChatScreen'; // Create this screen
+import WishlistScreen from './WishlistScreen'; // Create this screen
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -21,6 +23,10 @@ function MyTabs() {
           imageSource = require('../../assets/images/search.png');
         } else if (route.name === 'LoginStack') {
           imageSource = require('../../assets/images/user.png');
+        } else if (route.name === 'ChatScreen') {
+          imageSource = require('../../assets/images/chat.png');
+        } else if (route.name === 'WishlistScreen') {
+          imageSource = require('../../assets/images/star.png');
         }
         return (
           <Image
@@ -41,6 +47,8 @@ function MyTabs() {
     >
       <Tab.Screen name="LoginStack" component={LoginStack} />
       <Tab.Screen name="HomeScreen" component={HomeScreen} />
+      <Tab.Screen name="ChatScreen" component={ChatScreen} />
+      <Tab.Screen name="WishlistScreen" component={WishlistScreen} />
     </Tab.Navigator>
   );
 }
