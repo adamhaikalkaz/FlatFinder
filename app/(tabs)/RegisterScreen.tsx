@@ -1,14 +1,26 @@
 import React, { useState } from 'react';
-import { TextInput, TouchableOpacity, Text, View, StyleSheet } from 'react-native';
+import { TextInput, TouchableOpacity, Text, View, StyleSheet, Alert } from 'react-native';
 
 export default function RegisterScreen() {
-  const [username, setUsername] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [email, setEmail] = useState('');
 
   const handleRegister = () => {
+    if (password !== confirmPassword) {
+      Alert.alert('Error', 'Passwords do not match');
+      return;
+    }
+
+    if (password.length < 8 || !/\d/.test(password) || !/[A-Z]/.test(password)) {
+      Alert.alert('Error', 'Password must be at least 8 characters long, contain a number, and an uppercase letter');
+      return;
+    }
+
     // Add your registration logic here
-    alert(`Registered with Username: ${username}, Email: ${email}`);
+    alert(`Registered with First Name: ${firstName}, Last Name: ${lastName}, Email: ${email}`);
   };
 
   return (
@@ -16,13 +28,22 @@ export default function RegisterScreen() {
       <View style={styles.overlay}>
         <View style={styles.container}>
           <Text style={styles.title}>Register</Text>
-          <TextInput
-            style={styles.input}
-            placeholder="Username"
-            placeholderTextColor="#aaa"
-            value={username}
-            onChangeText={setUsername}
-          />
+          <View style={styles.nameContainer}>
+            <TextInput
+              style={[styles.input, styles.halfInput]}
+              placeholder="First Name"
+              placeholderTextColor="#aaa"
+              value={firstName}
+              onChangeText={setFirstName}
+            />
+            <TextInput
+              style={[styles.input, styles.halfInput]}
+              placeholder="Last Name"
+              placeholderTextColor="#aaa"
+              value={lastName}
+              onChangeText={setLastName}
+            />
+          </View>
           <TextInput
             style={styles.input}
             placeholder="Email"
@@ -38,6 +59,20 @@ export default function RegisterScreen() {
             onChangeText={setPassword}
             secureTextEntry
           />
+          <TextInput
+            style={styles.input}
+            placeholder="Confirm Password"
+            placeholderTextColor="#aaa"
+            value={confirmPassword}
+            onChangeText={setConfirmPassword}
+            secureTextEntry
+          />
+          <Text style={styles.passwordCondition}>
+            Password must:
+            {'\n'}• Be at least 8 characters long
+            {'\n'}• Contain a number
+            {'\n'}• Contain an uppercase letter
+          </Text>
           <TouchableOpacity style={styles.button} onPress={handleRegister}>
             <Text style={styles.buttonText}>Register</Text>
           </TouchableOpacity>
@@ -71,15 +106,27 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     textAlign: 'center',
   },
+  nameContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  halfInput: {
+    width: '48%',
+  },
   input: {
     backgroundColor: '#333',
     color: 'white',
-    width: '100%',
     height: 50,
     borderRadius: 5,
     paddingLeft: 20,
     marginBottom: 20,
     fontSize: 18,
+  },
+  passwordCondition: {
+    color: 'white',
+    fontSize: 14,
+    marginBottom: 20,
+    textAlign: 'left',
   },
   button: {
     backgroundColor: '#39FF14',
