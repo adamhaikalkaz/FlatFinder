@@ -8,19 +8,23 @@ import {
   StyleSheet,
   Image,
 } from 'react-native';
+import { auth } from './FirebaseConfig';
+import { signInWithEmailAndPassword } from 'firebase/auth';
 
 export default function LoginScreen({ navigation }: { navigation: any }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [username, setUsername] = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [role, setRole] = useState('employee'); // Default role is 'employee'
 
-  const handleLogin = () => {
-    // Simple demo check
-    if (username === 'user' && password === 'password') {
+  const handleLogin = async () => {
+    try {
+      const userCredential = await signInWithEmailAndPassword(auth, email, password);
       setIsLoggedIn(true);
-    } else {
-      alert('Invalid credentials');
+      const user = userCredential.user;
+      console.log('Logged in user:', user);
+    } catch (error) {
+      console.error('Login error:', error);
     }
   };
 
@@ -54,13 +58,13 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
             </TouchableOpacity>
           </View>
 
-          {/* Username Input */}
+          {/* Email Input */}
           <TextInput
             style={styles.input}
             placeholder="Email"
             placeholderTextColor="#999"
-            value={username}
-            onChangeText={setUsername}
+            value={email}
+            onChangeText={setEmail}
           />
 
           {/* Password Input */}
@@ -98,7 +102,7 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
   // If logged in, show this screen:
   return (
     <View style={styles.loggedInContainer}>
-      <Text style={styles.loggedInText}>Welcome, {username}!</Text>
+      <Text style={styles.loggedInText}>Welcome !</Text>
     </View>
   );
 }
