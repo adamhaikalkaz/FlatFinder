@@ -6,8 +6,8 @@ import {
   TextInput,
   TouchableOpacity,
   StyleSheet,
+  Image,
 } from 'react-native';
-import Svg, { Path, Defs, Pattern, Image } from 'react-native-svg';
 
 export default function LoginScreen({ navigation }: { navigation: any }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
@@ -27,24 +27,13 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
   if (!isLoggedIn) {
     return (
       <SafeAreaView style={styles.container}>
-        {/* Top Blue Section with Title */}
-        <View style={styles.headerContainer}>
-          <Text style={styles.title}>Sign In</Text>
-        </View>
-
-        {/* Wave Shape */}
-        <View style={styles.waveContainer}>
-          <Svg
-            height="190%"
-            width="100%"
-            viewBox="0 0 1440 320"
-            style={styles.wave}
-          >
-            <Path
-              fill="#fff"
-              d="M0,64L48,80C96,96,192,128,288,160C384,192,480,224,576,234.7C672,245,768,235,864,224C960,213,1056,203,1152,213.3C1248,224,1344,256,1392,272L1440,288L1440,320L1392,320C1344,320,1248,320,1152,320C1056,320,960,320,864,320C768,320,672,320,576,320C480,320,384,320,288,320C192,320,96,320,48,320L0,320Z"
-            />
-          </Svg>
+        {/* Top Image */}
+        <View style={styles.topImageContainer}>
+          <Image
+            source={require("../../assets/images/topVector.png")}
+            style={styles.topImage}
+          />
+          <Text style={styles.signInText}>Sign In</Text>
         </View>
 
         {/* White Section with Form */}
@@ -68,7 +57,7 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
           {/* Username Input */}
           <TextInput
             style={styles.input}
-            placeholder="Username"
+            placeholder="Email"
             placeholderTextColor="#999"
             value={username}
             onChangeText={setUsername}
@@ -114,33 +103,39 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
   );
 }
 
-const BLUE = '#39FF14'; // Change to your preferred color
+const BLUE = '#07dd05'; // Change to your preferred color
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: BLUE,
+    backgroundColor: '#FFF', // Ensure the container has a white background
+  },
+  topImageContainer: {
+    width: '100%',
+    height: 130,
+    backgroundColor: '#FFF', // Ensure the top image container has a white background
+    alignItems: 'center', // Center the text horizontally
+  },
+  topImage: {
+    width: '100%',
+    height: '120%',
+    resizeMode: 'cover',
+  },
+  signInText: {
+    fontSize: 50,
+    fontWeight: '600',
+    color: '#333',
+    marginTop: 10, // Adjust this value to move the text down
   },
   headerContainer: {
     height: 180,
     justifyContent: 'center',
     alignItems: 'center',
+    backgroundColor: '#FFF',
   },
   title: {
     fontSize: 32,
-    color: '#FFF',
     fontWeight: '600',
-  },
-  waveContainer: {
-    position: 'absolute',
-    top: 160, // Adjust so the wave overlaps your header
-    left: 0,
-    right: 0,
-    height: 120,
-  },
-  wave: {
-    width: '100%',
-    height: '100%',
   },
   formContainer: {
     flex: 1,
@@ -164,7 +159,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   selectedRoleButton: {
-    backgroundColor: '#39FF14',
+    backgroundColor: '#07dd05',
     borderRadius: 5,
     padding: 10,
     width: '48%',

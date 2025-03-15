@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextInput, TouchableOpacity, Text, View, StyleSheet, Alert } from 'react-native';
+import { TextInput, TouchableOpacity, Text, View, StyleSheet, Alert, Image } from 'react-native';
 
 export default function RegisterScreen() {
   const [firstName, setFirstName] = useState('');
@@ -27,7 +27,7 @@ export default function RegisterScreen() {
     <View style={styles.background}>
       <View style={styles.overlay}>
         <View style={styles.container}>
-          <Text style={styles.title}>Register</Text>
+          <Text style={styles.title}>Create Account</Text>
           <View style={styles.nameContainer}>
             <TextInput
               style={[styles.input, styles.halfInput]}
@@ -74,8 +74,14 @@ export default function RegisterScreen() {
             {'\n'}• Contain an uppercase letter
           </Text>
           <TouchableOpacity style={styles.button} onPress={handleRegister}>
-            <Text style={styles.buttonText}>Register</Text>
+            <Text style={styles.buttonText}>Create</Text>
           </TouchableOpacity>
+        </View>
+        <View style={styles.bottomImageContainer}>
+          <Image
+            source={require("../../assets/images/bottomVector.png")}
+            style={styles.bottomImage}
+          />
         </View>
       </View>
     </View>
@@ -85,26 +91,30 @@ export default function RegisterScreen() {
 const styles = StyleSheet.create({
   background: {
     flex: 1,
-    backgroundColor: 'black',
+    backgroundColor: '#FFF',
     justifyContent: 'center',
   },
   overlay: {
     flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'center',
+    backgroundColor: '#FFF',
+    justifyContent: 'space-between', // Adjusted to space elements evenly
     alignItems: 'center',
+    padding: 20,
   },
   container: {
-    width: '80%',
-    backgroundColor: 'rgba(0, 0, 0, 0.75)',
+    width: '100%',
+    backgroundColor: '#FFF',
     padding: 20,
     borderRadius: 10,
+    marginTop: 70,
+
   },
   title: {
-    fontSize: 32,
-    color: 'white',
+    fontSize: 28,
+    color: '#333',
     marginBottom: 20,
     textAlign: 'center',
+    fontFamily: 'Arial',
   },
   nameContainer: {
     flexDirection: 'row',
@@ -114,29 +124,53 @@ const styles = StyleSheet.create({
     width: '48%',
   },
   input: {
-    backgroundColor: '#333',
-    color: 'white',
+    color: '#333',
+    borderColor: 'gray',
+    borderWidth: 1,
     height: 50,
-    borderRadius: 5,
+    borderRadius: 8,
     paddingLeft: 20,
     marginBottom: 20,
-    fontSize: 18,
+    fontSize: 16,
+    backgroundColor: '#f9f9f9',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5,
   },
   passwordCondition: {
-    color: 'white',
+    color: '#666',
     fontSize: 14,
     marginBottom: 20,
     textAlign: 'left',
   },
   button: {
-    backgroundColor: '#39FF14',
-    borderRadius: 5,
+    backgroundColor: '#07dd05',
+    borderRadius: 8,
     padding: 15,
     alignItems: 'center',
     marginBottom: 20,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    elevation: 5,
   },
   buttonText: {
     color: 'white',
     fontSize: 18,
+    fontFamily: 'Arial',
+  },
+  bottomImageContainer: {
+    width: '120%',
+    height: 120,
+    backgroundColor: '#FFF', // Ensure the top image container has a white background
+    alignItems: 'center', // Center the text horizontally
+  },
+  bottomImage: {
+    width: '100%',
+    height: '120%',
+    resizeMode: 'cover',
   },
 });
