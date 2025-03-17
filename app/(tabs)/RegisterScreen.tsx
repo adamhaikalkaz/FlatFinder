@@ -1,5 +1,9 @@
 import React, { useState } from 'react';
 import { TextInput, TouchableOpacity, Text, View, StyleSheet, Alert, Image } from 'react-native';
+import { auth, firestore, db } from './FirebaseConfig';
+import { useNavigation } from '@react-navigation/native';
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 
 export default function RegisterScreen() {
   const [firstName, setFirstName] = useState('');
@@ -8,7 +12,9 @@ export default function RegisterScreen() {
   const [confirmPassword, setConfirmPassword] = useState('');
   const [email, setEmail] = useState('');
 
-  const handleRegister = () => {
+  const navigation = useNavigation();
+
+  const handleRegister = async () => {
     if (password !== confirmPassword) {
       Alert.alert('Error', 'Passwords do not match');
       return;
@@ -19,8 +25,28 @@ export default function RegisterScreen() {
       return;
     }
 
-    // Add your registration logic here
-    alert(`Registered with First Name: ${firstName}, Last Name: ${lastName}, Email: ${email}`);
+    try {
+      // Create user in Firebase Authentication
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // Store user data in Firestore under 'landlords' collection
+      await setDoc(doc(db, "user", user.uid),{
+        email: email,
+        firstName: firstName,
+        lastName: lastName,
+        user_ID: user.uid,
+        user_type: 'landlord',
+      });
+
+      Alert.alert('Success', 'Account created successfully!');
+      
+      // Navigate to the Login or Dashboard screen after successful registration
+      navigation.navigate('LoginScreen'); // Replace 'Login' with your desired screen name
+
+    } catch (error) {
+      Alert.alert('Registration Error', error.message);
+    }
   };
 
   return (
@@ -86,7 +112,9 @@ export default function RegisterScreen() {
       </View>
     </View>
   );
-}
+};
+
+export default RegisterScreen;
 
 const styles = StyleSheet.create({
   background: {
@@ -107,7 +135,6 @@ const styles = StyleSheet.create({
     padding: 20,
     borderRadius: 10,
     marginTop: 70,
-
   },
   title: {
     fontSize: 28,

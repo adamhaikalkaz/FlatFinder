@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   StyleSheet,
   Image,
+  Alert,
 } from 'react-native';
 import { auth } from './FirebaseConfig';
 import { signInWithEmailAndPassword } from 'firebase/auth';
@@ -18,6 +19,16 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
   const [role, setRole] = useState('employee'); // Default role is 'employee'
 
   const handleLogin = async () => {
+    // Validate email based on role
+    if (role === 'employee' && !email.endsWith('@fdmgroup.com')) {
+      Alert.alert('Invalid Email', 'Employees must use an @fdmgroup.com email.');
+      return;
+    }
+    if (role === 'landlord' && email.endsWith('@fdmgroup.com')) {
+      Alert.alert('Invalid Email', 'Landlords cannot use an @fdmgroup.com email.');
+      return;
+    }
+
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       setIsLoggedIn(true);
@@ -212,5 +223,5 @@ const styles = StyleSheet.create({
   },
   loggedInText: {
     fontSize: 24,
-  },
+  }
 });
