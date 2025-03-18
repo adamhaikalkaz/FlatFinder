@@ -48,7 +48,7 @@ export default function LoginScreen({ navigation, setIsAuthenticated }) {
         {/* Top Image */}
         <View style={styles.topImageContainer}>
           <Image
-            source={require("../../assets/images/topVector.png")}
+            source={require("../../assets/images/buildings.png")}
             style={styles.topImage}
           />
           <Text style={styles.signInText}>Sign In</Text>
@@ -109,6 +109,15 @@ export default function LoginScreen({ navigation, setIsAuthenticated }) {
             </Text>
           )}
         </View>
+
+        {/* Bottom Image and Text */}
+        <View style={styles.bottomContainer}>
+          <Image
+            source={require("../../assets/images/FDM.png")}
+            style={styles.bottomImage}
+          />
+          <Text style={styles.bottomText}>Flat Finder</Text>
+        </View>
       </SafeAreaView>
     );
   }
@@ -126,12 +135,12 @@ const BLUE = '#07dd05'; // Change to your preferred color
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#FFF', // Ensure the container has a white background
+    backgroundColor: '#2b2b2b', // Ensure the container has a white background
   },
   topImageContainer: {
     width: '100%',
-    height: 130,
-    backgroundColor: '#FFF', // Ensure the top image container has a white background
+    height: 200,
+    backgroundColor: '#c6ff00', // Ensure the top image container has a white background
     alignItems: 'center', // Center the text horizontally
   },
   topImage: {
@@ -142,7 +151,7 @@ const styles = StyleSheet.create({
   signInText: {
     fontSize: 50,
     fontWeight: '600',
-    color: '#333',
+    color: 'white',
     marginTop: 10, // Adjust this value to move the text down
   },
   headerContainer: {
@@ -157,8 +166,8 @@ const styles = StyleSheet.create({
   },
   formContainer: {
     flex: 1,
-    backgroundColor: '#FFF',
-    marginTop: 140, // Enough space for the wave
+    backgroundColor: '#2b2b2b',
+    marginTop: 120, // Enough space for the wave
     borderTopLeftRadius: 0,
     borderTopRightRadius: 0,
     paddingHorizontal: 20,
@@ -177,20 +186,20 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   selectedRoleButton: {
-    backgroundColor: '#07dd05',
+    backgroundColor: '#c6ff00',
     borderRadius: 5,
     padding: 10,
     width: '48%',
     alignItems: 'center',
   },
   roleButtonText: {
-    color: '#FFF',
+    color: '#2b2b2b',
     fontSize: 16,
   },
   input: {
     height: 50,
     borderWidth: 1,
-    borderColor: '#EEE',
+    borderColor: '#c6ff00',
     borderRadius: 8,
     paddingHorizontal: 15,
     marginBottom: 15,
@@ -198,25 +207,25 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   loginButton: {
-    backgroundColor: BLUE,
+    backgroundColor: '#c6ff00',
     borderRadius: 8,
     paddingVertical: 15,
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: 10,
   },
   loginButtonText: {
-    color: '#FFF',
+    color: '#2b2b2b',
     fontSize: 18,
     fontWeight: '600',
   },
   signupText: {
     fontSize: 16,
-    color: '#555',
+    color: '#999',
     textAlign: 'center',
   },
   signupLink: {
     fontSize: 16,
-    color: BLUE,
+    color: '#c6ff00',
     fontWeight: '600',
   },
   loggedInContainer: {
@@ -226,5 +235,22 @@ const styles = StyleSheet.create({
   },
   loggedInText: {
     fontSize: 24,
-  }
+  },
+  bottomContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: 0,
+    backgroundColor: '#c6ff00',
+  },
+  bottomImage: {
+    width: 90,
+    height: 50,
+    resizeMode: 'contain',
+    marginRight: 10,
+  },
+  bottomText: {
+    fontSize: 18,
+    color: '#333',
+  },
 });

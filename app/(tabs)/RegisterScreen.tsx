@@ -103,11 +103,12 @@ export default function RegisterScreen() {
             <Text style={styles.buttonText}>Create</Text>
           </TouchableOpacity>
         </View>
-        <View style={styles.bottomImageContainer}>
+        <View style={styles.bottomContainer}>
           <Image
-            source={require("../../assets/images/bottomVector.png")}
+            source={require("../../assets/images/FDM.png")}
             style={styles.bottomImage}
           />
+          <Text style={styles.bottomText}>Flat Finder</Text>
         </View>
       </View>
     </View>
@@ -119,26 +120,26 @@ export default RegisterScreen;
 const styles = StyleSheet.create({
   background: {
     flex: 1,
-    backgroundColor: '#FFF',
+    backgroundColor: '#2b2b2b',
     justifyContent: 'center',
   },
   overlay: {
     flex: 1,
-    backgroundColor: '#FFF',
+    backgroundColor: '#2b2b2b',
     justifyContent: 'space-between', // Adjusted to space elements evenly
     alignItems: 'center',
     padding: 20,
   },
   container: {
     width: '100%',
-    backgroundColor: '#FFF',
+    backgroundColor: '#2b2b2b',
     padding: 20,
     borderRadius: 10,
-    marginTop: 70,
+    marginTop: 140,
   },
   title: {
     fontSize: 28,
-    color: '#333',
+    color: 'white',
     marginBottom: 20,
     textAlign: 'center',
     fontFamily: 'Arial',
@@ -152,14 +153,14 @@ const styles = StyleSheet.create({
   },
   input: {
     color: '#333',
-    borderColor: 'gray',
+    borderColor: '#c6ff00',
     borderWidth: 1,
     height: 50,
     borderRadius: 8,
     paddingLeft: 20,
     marginBottom: 20,
     fontSize: 16,
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#2b2b2b',
     shadowColor: '#000',
     shadowOffset: { width: 0, height: 2 },
     shadowOpacity: 0.1,
@@ -167,13 +168,13 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   passwordCondition: {
-    color: '#666',
+    color: 'white',
     fontSize: 14,
     marginBottom: 20,
     textAlign: 'left',
   },
   button: {
-    backgroundColor: '#07dd05',
+    backgroundColor: '#c6ff00',
     borderRadius: 8,
     padding: 15,
     alignItems: 'center',
@@ -185,19 +186,27 @@ const styles = StyleSheet.create({
     elevation: 5,
   },
   buttonText: {
-    color: 'white',
+    color: '#2b2b2b',
     fontSize: 18,
     fontFamily: 'Arial',
   },
-  bottomImageContainer: {
-    width: '120%',
-    height: 120,
-    backgroundColor: '#FFF', // Ensure the top image container has a white background
-    alignItems: 'center', // Center the text horizontally
+
+  bottomContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginBottom: -16,
+    backgroundColor: '#c6ff00',
+    width: '150%',
   },
   bottomImage: {
-    width: '100%',
-    height: '120%',
-    resizeMode: 'cover',
+    width: 90,
+    height: 50,
+    resizeMode: 'contain',
+    marginRight: 10,
+  },
+  bottomText: {
+    fontSize: 18,
+    color: '#333',
   },
 });
