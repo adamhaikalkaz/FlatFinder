@@ -12,7 +12,7 @@ import {
 import { auth } from './FirebaseConfig';
 import { signInWithEmailAndPassword } from 'firebase/auth';
 
-export default function LoginScreen({ navigation }: { navigation: any }) {
+export default function LoginScreen({ navigation, setIsAuthenticated }) {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -34,8 +34,11 @@ export default function LoginScreen({ navigation }: { navigation: any }) {
       setIsLoggedIn(true);
       const user = userCredential.user;
       console.log('Logged in user:', user);
+      // Set authentication state to true
+      setIsAuthenticated(true);
     } catch (error) {
       console.error('Login error:', error);
+      Alert.alert('Login Error', error.message);
     }
   };
 
