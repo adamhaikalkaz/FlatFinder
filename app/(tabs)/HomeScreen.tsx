@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import { View, Text, StyleSheet, FlatList, TextInput } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
+import { Button } from 'react-native-paper';
+import ReviewScreen from './ReviewScreen';
 
 const flats = [
   { id: '1', name: 'Flat 1', location: 'Location 1' },
@@ -9,6 +12,7 @@ const flats = [
 
 export default function HomeScreen() {
   const [search, setSearch] = useState('');
+  const navigation = useNavigation();
 
   const filteredFlats = flats.filter(flat =>
     flat.name.toLowerCase().includes(search.toLowerCase())
@@ -33,6 +37,12 @@ export default function HomeScreen() {
           </View>
         )}
       />
+      <Button
+        mode="contained"
+        onPress={() => navigation.navigate('ReviewScreen')}
+      >
+        Review
+      </Button>
     </View>
   );
 }

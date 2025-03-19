@@ -4,12 +4,14 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import { Provider as PaperProvider } from 'react-native-paper';
 import { Image } from 'react-native';
-import HomeScreen from './HomeScreen'; // Create this screen
-import LoginScreen from './LoginScreen'; // Create this screen
-import RegisterScreen from './RegisterScreen'; // Create this screen
-import ChatScreen from './ChatScreen'; // Create this screen
-import WishlistScreen from './WishlistScreen'; // Create this screen
+import HomeScreen from './HomeScreen';
+import LoginScreen from './LoginScreen';
+import RegisterScreen from './RegisterScreen';
+import ChatScreen from './ChatScreen';
+import WishlistScreen from './WishlistScreen';
 import UserScreen from './UserScreen';
+import ReviewScreen from './ReviewScreen'; // Ensure this path is correct
+import AddReviewScreen from './AddReviewScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -21,7 +23,7 @@ function MyTabs() {
         tabBarIcon: ({ focused, size }) => {
           let imageSource;
 
-          if (route.name === 'HomeScreen') {
+          if (route.name === 'HomeStack') {
             imageSource = require('../../assets/images/search.png');
           } else if (route.name === 'UserScreen') {
             imageSource = require('../../assets/images/user.png');
@@ -47,7 +49,7 @@ function MyTabs() {
         },
       })}
     >
-      <Tab.Screen name="HomeScreen" component={HomeScreen} />
+      <Tab.Screen name="HomeStack" component={HomeStack} />
       <Tab.Screen name="ChatScreen" component={ChatScreen} />
       <Tab.Screen name="UserScreen" component={UserScreen} />
       <Tab.Screen name="WishlistScreen" component={WishlistScreen} />
@@ -62,6 +64,16 @@ function LoginStack({ setIsAuthenticated }) {
         {props => <LoginScreen {...props} setIsAuthenticated={setIsAuthenticated} />}
       </Stack.Screen>
       <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
+    </Stack.Navigator>
+  );
+}
+
+function HomeStack() {
+  return (
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
+      <Stack.Screen name="HomeScreen" component={HomeScreen} />
+      <Stack.Screen name="ReviewScreen" component={ReviewScreen} />
+      <Stack.Screen name="AddReviewScreen" component={AddReviewScreen} />
     </Stack.Navigator>
   );
 }
