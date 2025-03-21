@@ -96,6 +96,14 @@ export default function LoginScreen({ navigation, setIsAuthenticated }) {
             <Text style={styles.loginButtonText}>Sign In</Text>
           </TouchableOpacity>
 
+          {/* Forgot Password Link */}
+          <Text
+            style={styles.forgotPasswordLink}
+            onPress={() => navigation.navigate('ResetPasswordScreen')}
+          >
+          Forgot Password
+          </Text>
+
           {/* Landlord Sign-up Link */}
           {role === 'landlord' && (
             <Text style={styles.signupText}>
@@ -152,7 +160,7 @@ const styles = StyleSheet.create({
     fontSize: 50,
     fontWeight: '600',
     color: 'white',
-    marginTop: 10, // Adjust this value to move the text down
+    marginTop: 30, // Adjust this value to move the text down
   },
   headerContainer: {
     height: 180,
@@ -218,7 +226,14 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: '600',
   },
+  forgotPasswordLink: {
+    fontSize: 16,
+    color: '#c6ff00',
+    fontWeight: '600',
+    textDecorationLine: 'underline',
+  },
   signupText: {
+    marginTop: 10,
     fontSize: 16,
     color: '#999',
     textAlign: 'center',

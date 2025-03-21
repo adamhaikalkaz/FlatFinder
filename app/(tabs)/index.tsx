@@ -12,6 +12,7 @@ import WishlistScreen from './WishlistScreen';
 import UserScreen from './UserScreen';
 import ReviewScreen from './ReviewScreen'; // Ensure this path is correct
 import AddReviewScreen from './AddReviewScreen';
+import ResetPasswordScreen from './ResetPasswordScreen';
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -64,6 +65,7 @@ function LoginStack({ setIsAuthenticated }) {
         {props => <LoginScreen {...props} setIsAuthenticated={setIsAuthenticated} />}
       </Stack.Screen>
       <Stack.Screen name="RegisterScreen" component={RegisterScreen} />
+      <Stack.Screen name="ResetPasswordScreen" component={ResetPasswordScreen} />
     </Stack.Navigator>
   );
 }

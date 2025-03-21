@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
     width: '48%',
   },
   input: {
-    color: '#333',
+    color: 'white',
     borderColor: '#c6ff00',
     borderWidth: 1,
     height: 50,
