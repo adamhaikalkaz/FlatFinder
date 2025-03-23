@@ -3,6 +3,7 @@ import { black } from 'react-native-paper/lib/typescript/styles/themes/v2/colors
 import { getFirestore, setDoc, doc, collection, getDocs } from "firebase/firestore";
 import db from "./FirebaseConfig";
 import { getAuth } from "firebase/auth";
+import ReviewScreen from './ReviewScreen';
 import { StatusBar, StyleSheet, Text, View, ScrollView, TouchableOpacity, Image, navigation,TextInput,Alert, Button } from 'react-native';
 
 export default function AddReviewScreen({ navigation }) {
@@ -72,7 +73,7 @@ export default function AddReviewScreen({ navigation }) {
         setReviewText("")
         console.log({ rating: numericRating, location, reviewText });
         Alert.alert('Review Submitted!', 'Thank you for your feedback.');
-        navigation.navigate('Reviews'); 
+        navigation.navigate(ReviewScreen); 
       } catch (error) {
         console.error("Error adding document: ", error);
       }

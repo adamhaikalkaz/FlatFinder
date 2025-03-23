@@ -13,6 +13,9 @@ import UserScreen from './UserScreen';
 import ReviewScreen from './ReviewScreen'; // Ensure this path is correct
 import AddReviewScreen from './AddReviewScreen';
 import ResetPasswordScreen from './ResetPasswordScreen';
+import ListingForm from './ListingForm';
+import PreviewListing from './PreviewListing';
+import PropertyScreen from './PropertyScreen'; // Ensure this path is correct and PropertyScreen is a valid React component
 
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
@@ -74,6 +77,9 @@ function HomeStack() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name="HomeScreen" component={HomeScreen} />
+      <Stack.Screen name="ListingForm" component={ListingForm} />
+      <Stack.Screen name="PreviewListing" component={PreviewListing}/>
+      <Stack.Screen name="PropertyScreen" component={PropertyScreen}/>
       <Stack.Screen name="ReviewScreen" component={ReviewScreen} />
       <Stack.Screen name="AddReviewScreen" component={AddReviewScreen} />
     </Stack.Navigator>
