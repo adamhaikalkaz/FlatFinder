@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { StatusBar, StyleSheet, Text, View, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import { getFirestore, collection, getDocs, orderBy, query } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, orderBy, query, where } from 'firebase/firestore';
 
-async function getReviews(sortBy = "date_time_desc") {
+async function getReviews(propertyId, sortBy = "date_time_desc") {
   const db = getFirestore();
   let order_by;
 
@@ -24,7 +24,7 @@ async function getReviews(sortBy = "date_time_desc") {
       order_by = orderBy("date_time", "desc");
   }
 
-  const dataQuery = query(collection(db, "reviews"), order_by);
+  const dataQuery = query(collection(db, "reviews"), where("property_id", "==", propertyId), order_by);
 
   try {
     const data = [];
@@ -41,7 +41,8 @@ async function getReviews(sortBy = "date_time_desc") {
   }
 }
 
-export default function ReviewScreen({ navigation }) {
+export default function ReviewScreen({ navigation, route }) {
+  const { propertyId } = route.params;
   const [showSort, setShowSort] = useState(false);
   const [reviews, setReviews] = useState([]);
   const [sortBy, setSortBy] = useState("date_time_desc");
@@ -49,7 +50,7 @@ export default function ReviewScreen({ navigation }) {
   useEffect(() => {
     async function fetchReviews() {
       try {
-        let revs = await getReviews(sortBy);
+        let revs = await getReviews(propertyId, sortBy);
         setReviews(revs);
       } catch (error) {
         console.error("Error fetching reviews: ", error);

@@ -64,6 +64,10 @@ const PropertyScreen = ({navigation, route}) => {
                     <Text>Chat to Landlord</Text>
                 </TouchableOpacity>
 
+                <TouchableOpacity style={styles.listingButtons} onPress={() => navigation.navigate("ReviewScreen", { propertyId: item.id })}>
+                    <Text>Reviews</Text>
+                </TouchableOpacity>
+
                { userRole === "landlord" && (
                 <TouchableOpacity style={styles.editButton} onPress={() => navigation.goBack()}>
                     <Text style={[styles.buttonText,{color:'#fff'}]}>Edit Listing</Text>
