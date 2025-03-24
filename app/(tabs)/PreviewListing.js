@@ -23,6 +23,8 @@ const PreviewListing = ({ route, navigation }) => {
 
     const SubmitListing = async () => {
 
+        navigation.navigate("HomeScreen");
+
         const imageUploadPromises = imageArray.map(async (image, index) => {
             const response = await fetch(image.uri);
             const blob = await response.blob(); 
@@ -47,8 +49,6 @@ const PreviewListing = ({ route, navigation }) => {
         });
 
         alert("Property listing submitted successfully!");
-
-        navigation.navigate("HomeScreen");
     
     };
     
