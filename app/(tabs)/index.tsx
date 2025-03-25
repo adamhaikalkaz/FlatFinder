@@ -20,7 +20,7 @@ import PropertyScreen from './PropertyScreen'; // Ensure this path is correct an
 const Tab = createBottomTabNavigator();
 const Stack = createStackNavigator();
 
-function MyTabs() {
+function MyTabs({ setIsAuthenticated }) {
   return (
     <Tab.Navigator
       screenOptions={({ route }) => ({
@@ -55,7 +55,9 @@ function MyTabs() {
     >
       <Tab.Screen name="HomeStack" component={HomeStack} />
       <Tab.Screen name="ChatScreen" component={ChatScreen} />
-      <Tab.Screen name="UserScreen" component={UserScreen} />
+      <Tab.Screen name="UserScreen">
+        {props => <UserScreen {...props} setIsAuthenticated={setIsAuthenticated} />}
+      </Tab.Screen>
       <Tab.Screen name="WishlistScreen" component={WishlistScreen} />
     </Tab.Navigator>
   );
@@ -91,7 +93,11 @@ export default function App() {
 
   return (
     <PaperProvider>
-      {isAuthenticated ? <MyTabs /> : <LoginStack setIsAuthenticated={setIsAuthenticated} />}
+      {isAuthenticated ? (
+        <MyTabs setIsAuthenticated={setIsAuthenticated} /> // Pass setIsAuthenticated here
+      ) : (
+        <LoginStack setIsAuthenticated={setIsAuthenticated} /> // Pass setIsAuthenticated here
+      )}
     </PaperProvider>
   );
 }

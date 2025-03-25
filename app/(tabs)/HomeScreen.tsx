@@ -81,11 +81,6 @@ export default function HomeScreen() {
               </TouchableOpacity>
           )}
       />
-      <Button
-          mode="contained"
-          onPress={() => navigation.navigate("ReviewScreen")}>
-          Review
-      </Button>
       </View>
   );
 };
