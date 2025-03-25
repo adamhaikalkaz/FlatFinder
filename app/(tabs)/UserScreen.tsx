@@ -94,7 +94,7 @@ export default function UserScreen({ setIsAuthenticated }) {
       <View style={styles.header}>
         <Image
           style={styles.profileImage}
-          source={{ uri: userData?.profilePicture || 'https://example.com/default-avatar.png' }}
+          source={(userData?.profilePicture && { uri: userData?.profilePicture}) || require('../../assets/images/usericon.png') }
         />
         <Text style={styles.name}>
           {userData ? `${userData.firstName} ${userData.lastName}` : 'Loading...'}

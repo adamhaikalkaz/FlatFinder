@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { black } from 'react-native-paper/lib/typescript/styles/themes/v2/colors';
-import { getFirestore, setDoc, doc, collection, getDocs } from "firebase/firestore";
+import { getFirestore, setDoc, doc, collection, getDocs, Timestamp } from "firebase/firestore";
 import db from "./FirebaseConfig";
 import { getAuth } from "firebase/auth";
 import ReviewScreen from './ReviewScreen';
 import { StatusBar, StyleSheet, Text, View, ScrollView, TouchableOpacity, Image, navigation,TextInput,Alert, Button } from 'react-native';
 
-export default function AddReviewScreen({ navigation }) {
+export default function AddReviewScreen({ navigation, route }) {
+  const { propertyId } = route.params;
   const [rating, setRating] = useState('');
   const [location, setLocation] = useState('');
   const [reviewText, setReviewText] = useState('');
@@ -16,7 +17,7 @@ export default function AddReviewScreen({ navigation }) {
 
   const handleSubmit = async() => {
     
-    /*
+    
     const user = auth.currentUser;
     
     if (!user)
@@ -24,21 +25,12 @@ export default function AddReviewScreen({ navigation }) {
       alert("user not logged in");
       return;
     }
-    */
-    //const user_ID = user.uid;
-    const user_ID = "EXAMPLE USER";
+    
+    const user_ID = user.uid;
+    //const user_ID = "EXAMPLE USER";
     const numericRating = Number(rating);
 
-    const review = {
-      user_ID: user_ID,
-      rating: rating,
-      location: location,
-      reviewText: reviewText,
-      timestamp: new Date(),
-    }
-
-    
-    if (!rating || !location.trim() || !reviewText.trim()) {
+    if (!rating || !reviewText.trim()) {
       Alert.alert('Missing Information', 'Please fill in all fields.');
       return;
     }
@@ -58,22 +50,20 @@ export default function AddReviewScreen({ navigation }) {
       try {
         const now = new Date();
         const docRef = await setDoc(doc(db, "reviews", user_ID), { //addDoc will create a unique id like uZx8yT4skiC0U7bySsNR 
-        // listings is the name of the database
-          date_time: now.toISOString(), // field
-          property_location: location, // field
-          rating: rating, // field
-          review: reviewText, // field
-          user_ID: user_ID, // field
+          date_time: Timestamp.now(), 
+          property_id: propertyId, 
+          rating: rating, 
+          review: reviewText, 
+          user_ID: user_ID, 
         });
     
 
         //console.log("Listing added with ID: ", docRef.id);
         setRating("")
-        setLocation("")
         setReviewText("")
-        console.log({ rating: numericRating, location, reviewText });
+        console.log({ rating: numericRating, location, reviewText, propertyId });
         Alert.alert('Review Submitted!', 'Thank you for your feedback.');
-        navigation.navigate(ReviewScreen); 
+        navigation.navigate("ReviewScreen", {propertyId}); 
       } catch (error) {
         console.error("Error adding document: ", error);
       }
@@ -86,8 +76,6 @@ export default function AddReviewScreen({ navigation }) {
       <View style={styles.main}>
         <Text style={{color:"white", fontWeight:'bold'}}>Enter rating from 1-5:</Text>
         <TextInput style={styles.input} placeholder="Rating (1-5)" keyboardType="numeric" value={rating} onChangeText={setRating} />
-        <Text style={{color:"white", fontWeight:'bold'}}>Enter Location of property:</Text>
-        <TextInput style={styles.input} placeholder="Location" value={location} onChangeText={setLocation} />
         <Text style={{color:"white", fontWeight:'bold'}}>Write your review:</Text>
         <TextInput style={styles.input} placeholder="Write your review..." value={reviewText} onChangeText={setReviewText} multiline />
         
