@@ -1,7 +1,7 @@
-import { Text, View, StyleSheet, Image, Dimensions, TouchableOpacity } from 'react-native';
-import React from 'react';
-import { db } from './FirebaseConfig';
-import { doc, getDoc } from 'firebase/firestore';
+import { Text, View, StyleSheet, Image, Dimensions, TouchableOpacity, Alert } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { db, auth } from './FirebaseConfig';
+import { doc, getDoc, setDoc, deleteDoc } from 'firebase/firestore';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
@@ -9,6 +9,7 @@ const { width } = Dimensions.get("window");
 
 const PropertyScreen = ({navigation, route}) => {
     const { item, userRole } = route.params;
+    const [isWishlisted, setIsWishlisted] = useState(false);
     const Address = item.Address;
     const City = item.City;
     const Postcode = item.Postcode;
@@ -18,8 +19,72 @@ const PropertyScreen = ({navigation, route}) => {
     const Beds = item.Beds;
     const Description = item.Description;
     const images = item.images;
-    
 
+    useEffect(() => {
+        checkWishlistStatus();
+    }, []);
+
+    const checkWishlistStatus = async () => {
+        const user = auth.currentUser;
+        if (!user) return;
+
+        try {
+            const wishlistRef = doc(db, "wishlist", `${user.uid}_${item.id}`);
+            const wishlistDoc = await getDoc(wishlistRef);
+            setIsWishlisted(wishlistDoc.exists());
+        } catch (error) {
+            console.error("Error checking wishlist status:", error);
+        }
+    };
+
+    const handleWishlist = async () => {
+        const user = auth.currentUser;
+        if (!user) {
+            console.log("No user logged in when trying to add to wishlist");
+            Alert.alert("Error", "Please log in to add items to your wishlist");
+            return;
+        }
+
+        try {
+            const wishlistRef = doc(db, "wishlist", `${user.uid}_${item.id}`);
+            console.log("Attempting to add/remove from wishlist:", {
+                userId: user.uid,
+                propertyId: item.id,
+                isWishlisted: isWishlisted,
+                wishlistRef: wishlistRef.path
+            });
+            
+            if (isWishlisted) {
+                console.log("Attempting to delete document:", wishlistRef.path);
+                await deleteDoc(wishlistRef);
+                console.log("Document deleted successfully");
+                setIsWishlisted(false);
+                console.log("Successfully removed from wishlist");
+                Alert.alert("Success", "Property removed from wishlist");
+            } else {
+                const wishlistData = {
+                    userId: user.uid,
+                    propertyId: item.id,
+                    propertyData: item,
+                    addedAt: new Date().toISOString()
+                };
+                console.log("Saving wishlist data:", wishlistData);
+                await setDoc(wishlistRef, wishlistData);
+                setIsWishlisted(true);
+                console.log("Successfully added to wishlist");
+                Alert.alert("Success", "Property added to wishlist");
+            }
+        } catch (error) {
+            console.error("Error updating wishlist:", error);
+            console.error("Error details:", {
+                code: error.code,
+                message: error.message,
+                stack: error.stack
+            });
+            Alert.alert("Error", "Failed to update wishlist");
+        }
+    };
+    
     return(
         <SafeAreaView style = {styles.container}>
             <ScrollView showsVerticalScrollIndicator={false}>
@@ -56,12 +121,21 @@ const PropertyScreen = ({navigation, route}) => {
                     <Text style={styles.infoText}>{Description}</Text>
                 </View>
 
-                <TouchableOpacity style={styles.listingButtons}>
-                    <Text>Save to Wishlist</Text>
+                <TouchableOpacity 
+                    style={[styles.listingButtons, isWishlisted && styles.wishlistedButton]} 
+                    onPress={handleWishlist}
+                >
+                    <Text style={[styles.buttonText, isWishlisted && styles.wishlistedText]}>
+                        {isWishlisted ? 'Remove from Wishlist' : 'Save to Wishlist'}
+                    </Text>
                 </TouchableOpacity>
 
                 <TouchableOpacity style={styles.listingButtons}>
                     <Text>Chat to Landlord</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.listingButtons} onPress={() => navigation.navigate("ReviewScreen", { propertyId: item.id })}>
+                    <Text>Reviews</Text>
                 </TouchableOpacity>
 
                { userRole === "landlord" && (
@@ -156,7 +230,15 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         alignItems: 'center',
         marginVertical:10,
-        borderWidth: 1
+        borderWidth: 1,
+        backgroundColor: '#fff'
+    },
+    wishlistedButton: {
+        backgroundColor: '#d32f2f',
+        borderColor: '#d32f2f'
+    },
+    wishlistedText: {
+        color: '#fff'
     },
     editButton: {
         backgroundColor: "red",
@@ -171,6 +253,5 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
     },
 });
-
 
 export default PropertyScreen;

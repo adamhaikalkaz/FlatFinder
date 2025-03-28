@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { StatusBar, StyleSheet, Text, View, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import { getFirestore, collection, getDocs, orderBy, query } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, orderBy, query, where, limit } from 'firebase/firestore';
 
-async function getReviews(sortBy = "date_time_desc") {
+async function getReviews(propertyId: string, sortBy = "date_time_desc") {
   const db = getFirestore();
   let order_by;
+  let users = {};
 
   switch (sortBy) {
     case "date_time_desc":
@@ -24,32 +25,53 @@ async function getReviews(sortBy = "date_time_desc") {
       order_by = orderBy("date_time", "desc");
   }
 
-  const dataQuery = query(collection(db, "reviews"), order_by);
+  const dataQuery = query(collection(db, "reviews"), where("property_id", "==", propertyId), order_by);
 
   try {
     const data = [];
     const snapshot = await getDocs(dataQuery);
 
-    snapshot.forEach((doc) => {
-      data.push({ id: doc.id, ...doc.data() });
-    });
-
+    console.log(`Fetched ${snapshot.size} reviews for property ${propertyId}`);
+    let docs = [];
+    snapshot.forEach((doc) => {docs.push(doc)});
+    for(let doc of docs) {
+      let review = { id: doc.id, ...doc.data() }
+      const userQuery = query(collection(db, "user"), where("user_ID", "==", review.user_ID));
+      review.user = {}
+      review.user.firstName = "Loading..."
+      review.user.lastName = ""
+      await getDocs(userQuery).then((user) => {
+        user.forEach((doc) => {
+          console.log(`Fetched user ${doc.id} for review ${review.id}`);
+          users[review.user_ID] = doc.data();
+        });
+        review.user = users[review.user_ID];
+      });
+      
+      review.date_time = new Date(review.date_time.seconds * 1000);
+      console.log(review);
+      data.push(review);
+    }
     return data;
+    
   } catch (error) {
     console.error("Error fetching reviews: ", error);
     return [];
   }
 }
 
-export default function ReviewScreen({ navigation }) {
+export default function ReviewScreen({ navigation, route }) {
+  const { propertyId } = route.params;
+
   const [showSort, setShowSort] = useState(false);
   const [reviews, setReviews] = useState([]);
+  const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
   const [sortBy, setSortBy] = useState("date_time_desc");
 
   useEffect(() => {
     async function fetchReviews() {
       try {
-        let revs = await getReviews(sortBy);
+        let revs = await getReviews(propertyId, sortBy);
         setReviews(revs);
       } catch (error) {
         console.error("Error fetching reviews: ", error);
@@ -82,7 +104,7 @@ export default function ReviewScreen({ navigation }) {
             <Text>Sort</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity style={styles.Button} onPress={() => navigation.navigate('AddReviewScreen')}>
+          <TouchableOpacity style={styles.Button} onPress={() => navigation.navigate('AddReviewScreen', {propertyId})}>
             <Text>Add Review</Text>
           </TouchableOpacity>
         </View>
@@ -94,8 +116,8 @@ export default function ReviewScreen({ navigation }) {
             <View style={styles.review}>
               <View style={styles.reviewHeader}>
                 <View style={styles.userInfo}>
-                  <Image source={require('../../assets/images/usericon.png')} style={styles.userIcon} />
-                  <Text style={{ fontWeight: 'bold', color: 'black' }}>{review.name || "Anonymous"}</Text>
+                  <Image source={(review.user.profilePicture && {uri: review.user.profilePicture}) || require('../../assets/images/usericon.png')} style={styles.userIcon} />
+                  <Text style={{ fontWeight: 'bold', color: 'black' }}>{`${review.user.firstName} ${review.user.lastName}` || "Anonymous"}</Text>
                 </View>
                 <Text style={{ color: 'black' }}>
                   <Text style={{ fontWeight: 'bold', color: 'black' }}>Rating: </Text>
@@ -104,8 +126,8 @@ export default function ReviewScreen({ navigation }) {
               </View>
 
               <Text style={styles.reviewText}>
-                <Text style={{ fontWeight: 'bold' }}>Location: </Text>
-                {review.property_location || "Unknown"}
+                <Text style={{ fontWeight: 'bold' }}>Posted on: </Text>
+                {`${months[review.date_time.getMonth()]} ${review.date_time.getDate()}, ${review.date_time.getFullYear()} at ${String(review.date_time.getHours()).padStart(2, '0')}:${String(review.date_time.getMinutes()).padStart(2, '0')}` || "Unknown"}
               </Text>
 
               <Text style={[styles.reviewText, { marginTop: 8, fontWeight: 'bold' }]}>Review:</Text>
@@ -189,6 +211,7 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     marginRight: 8,
+    borderRadius: 20,
   },
   reviewText: {
     marginTop: 8,
