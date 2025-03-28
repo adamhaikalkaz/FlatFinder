@@ -1,9 +1,10 @@
 import { Text, View, StyleSheet, Image, Dimensions, TouchableOpacity, Alert } from 'react-native';
 import React, { useState, useEffect } from 'react';
-import { db, auth } from './FirebaseConfig';
+import { db, auth, firestore } from './FirebaseConfig';
 import { doc, getDoc, setDoc, deleteDoc } from 'firebase/firestore';
 import { FlatList, ScrollView } from 'react-native-gesture-handler';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 
 const { width } = Dimensions.get("window");
 
@@ -19,10 +20,12 @@ const PropertyScreen = ({navigation, route}) => {
     const Beds = item.Beds;
     const Description = item.Description;
     const images = item.images;
+    const propertyId = item.id;
 
     useEffect(() => {
         checkWishlistStatus();
     }, []);
+
 
     const checkWishlistStatus = async () => {
         const user = auth.currentUser;
@@ -83,10 +86,35 @@ const PropertyScreen = ({navigation, route}) => {
             });
             Alert.alert("Error", "Failed to update wishlist");
         }
+
     };
+
+    const deleteProperty = async () => {
+        try {
+            await deleteDoc(doc(firestore,"properties", propertyId));
+            alert("Property deleted Successfully!");
+            navigation.navigate("HomeScreen");
+        } catch(error){
+            alert("failed to delete property")
+        }
+    }
     
     return(
         <SafeAreaView style = {styles.container}>
+            <View style={styles.header}>
+                <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginLeft: 15 }}>
+                    <Ionicons name="arrow-back" size={24} color="black" />
+                </TouchableOpacity>
+                {userRole === 'landlord' && (
+                    <View style={styles.headerRight}>
+                        <TouchableOpacity>
+                            <Ionicons name="pencil" size={24} color="green" />
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={deleteProperty}>
+                            <Ionicons name="trash" size={24} color="red" />
+                        </TouchableOpacity>
+                    </View>)}
+            </View>
             <ScrollView showsVerticalScrollIndicator={false}>
                 <FlatList
                     data={images}
@@ -138,10 +166,6 @@ const PropertyScreen = ({navigation, route}) => {
                     <Text>Reviews</Text>
                 </TouchableOpacity>
 
-               { userRole === "landlord" && (
-                <TouchableOpacity style={styles.editButton} onPress={() => navigation.goBack()}>
-                    <Text style={[styles.buttonText,{color:'#fff'}]}>Edit Listing</Text>
-                </TouchableOpacity>)}
             </ScrollView>
         </SafeAreaView>
     )
@@ -252,6 +276,16 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: "bold",
     },
+
+    headerRight: {
+        flexDirection: 'row',
+        gap:20,
+        marginRight: 15,
+    },
+    header: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+    }
 });
 
 export default PropertyScreen;
