@@ -36,14 +36,13 @@ export default function ChatScreen({ route }) {
   const { chatId, receiverId, receiverName } = route.params;
   const senderId = auth.currentUser?.uid;
 
-  console.log("CHAT DEBUG:", { chatId, senderId, receiverId });
-
   const [messages, setMessages] = useState([]);
   const [messageText, setMessageText] = useState('');
   const [previewMedia, setPreviewMedia] = useState(null);
   const [previewType, setPreviewType] = useState(null);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const soundRef = useRef(null);
+  const flatListRef = useRef(null);
 
   useEffect(() => {
     const messagesRef = collection(db, `chats/${chatId}/messages`);
@@ -74,6 +73,14 @@ export default function ChatScreen({ route }) {
 
     markMessagesAsSeen();
   }, [chatId, senderId]);
+
+  useEffect(() => {
+    if (flatListRef.current && messages.length > 0) {
+      setTimeout(() => {
+        flatListRef.current.scrollToEnd({ animated: false });
+      }, 50); // 50ms delay to allow layout to settle
+    }
+  }, [messages]);
 
   const sendMessage = async () => {
     if (!messageText.trim()) return;
@@ -231,6 +238,7 @@ export default function ChatScreen({ route }) {
       <Text style={styles.header}>{receiverName || 'Chat'}</Text>
 
       <FlatList
+        ref={flatListRef} // ✅ FlatList ref
         data={groupedMessages}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
