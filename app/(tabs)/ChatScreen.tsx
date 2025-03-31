@@ -26,7 +26,9 @@ import { MaterialIcons } from '@expo/vector-icons';
 import uuid from 'react-native-uuid';
 import { Audio } from 'expo-av';
 
-import { auth, db } from './FirebaseConfig';
+import { format, isToday, isYesterday, startOfDay } from 'date-fns';
+
+import { auth, db } from './FirebaseConfig'; // ✅ Same folder
 import MessageBubble from '../../components/MessageBubble';
 import AudioRecorder from '../../components/AudioRecorder';
 import MediaPreview from '../../components/MediaPreview';
@@ -47,7 +49,8 @@ export default function ChatScreen({ route }) {
     const q = query(messagesRef, orderBy('timestamp', 'asc'));
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      setMessages(snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() })));
+      const msgList = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      setMessages(msgList);
     });
 
     return () => unsubscribe();
@@ -167,6 +170,57 @@ export default function ChatScreen({ route }) {
     await sound.playAsync();
   };
 
+  const groupMessagesByDate = (messages) => {
+    const groups = {};
+
+    messages.forEach((msg) => {
+      const rawDate = msg.timestamp?.toDate ? msg.timestamp.toDate() : new Date(msg.timestamp);
+      const localDate = startOfDay(rawDate);
+      const dateStr = format(localDate, 'yyyy-MM-dd');
+
+      if (!groups[dateStr]) groups[dateStr] = [];
+      groups[dateStr].push(msg);
+    });
+
+    const finalList = [];
+
+    Object.keys(groups).forEach((dateStr) => {
+      const [year, month, day] = dateStr.split('-').map(Number);
+      const parsed = new Date(year, month - 1, day); // local-safe
+
+      const label = isToday(parsed)
+        ? 'Today'
+        : isYesterday(parsed)
+        ? 'Yesterday'
+        : format(parsed, 'dd MMM yyyy');
+
+      finalList.push({ type: 'date', id: `header-${dateStr}`, label });
+      groups[dateStr].forEach((msg) => finalList.push({ ...msg, type: 'message' }));
+    });
+
+    return finalList;
+  };
+
+  const renderItem = ({ item }) => {
+    if (item.type === 'date') {
+      return (
+        <View style={styles.dateHeader}>
+          <Text style={styles.dateHeaderText}>{item.label}</Text>
+        </View>
+      );
+    }
+
+    return (
+      <MessageBubble
+        message={item}
+        isSender={item.senderId === senderId}
+        onPlayAudio={playAudio}
+      />
+    );
+  };
+
+  const groupedMessages = groupMessagesByDate(messages);
+
   return (
     <KeyboardAvoidingView
       style={styles.container}
@@ -176,11 +230,9 @@ export default function ChatScreen({ route }) {
       <Text style={styles.header}>{receiverName || 'Chat'}</Text>
 
       <FlatList
-        data={messages}
+        data={groupedMessages}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => (
-          <MessageBubble message={item} isSender={item.senderId === senderId} onPlayAudio={playAudio} />
-        )}
+        renderItem={renderItem}
       />
 
       <View style={styles.inputContainer}>
@@ -219,14 +271,16 @@ export default function ChatScreen({ route }) {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, paddingTop: 10, backgroundColor: '#fff' },
+  container: { flex: 1, backgroundColor: '#f5f7fa' },
   header: {
     fontSize: 20,
-    fontWeight: 'bold',
+    fontWeight: '600',
     textAlign: 'center',
-    paddingVertical: 10,
+    paddingVertical: 12,
     borderBottomWidth: 1,
-    borderColor: '#eee',
+    borderColor: '#eaeaea',
+    backgroundColor: '#ffffff',
+    color: '#111',
   },
   inputContainer: {
     flexDirection: 'row',
@@ -234,7 +288,7 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderColor: '#ccc',
     alignItems: 'center',
-    backgroundColor: '#f9f9f9',
+    backgroundColor: '#fff',
   },
   input: {
     flex: 1,
@@ -244,7 +298,8 @@ const styles = StyleSheet.create({
     borderRadius: 25,
     paddingHorizontal: 15,
     marginRight: 8,
-    backgroundColor: '#fff',
+    backgroundColor: '#fdfdfd',
+    fontSize: 15,
   },
   sendButton: {
     backgroundColor: '#39FF14',
@@ -255,8 +310,22 @@ const styles = StyleSheet.create({
   sendButtonText: { fontWeight: 'bold', color: '#000' },
   iconButton: {
     marginLeft: 6,
-    padding: 6,
+    padding: 8,
     backgroundColor: '#2b2b2b',
     borderRadius: 20,
+  },
+  dateHeader: {
+    alignSelf: 'center',
+    backgroundColor: '#e0e0e0',
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+    borderRadius: 12,
+    marginTop: 16,
+    marginBottom: 6,
+  },
+  dateHeaderText: {
+    fontSize: 13,
+    color: '#555',
+    fontWeight: '600',
   },
 });

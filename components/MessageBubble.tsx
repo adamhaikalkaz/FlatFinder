@@ -1,4 +1,3 @@
-// components/MessageBubble.tsx
 import React from 'react';
 import { View, Text, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { MaterialIcons } from '@expo/vector-icons';
@@ -10,91 +9,84 @@ export default function MessageBubble({ message, isSender, onPlayAudio }) {
   const formatTimestamp = (timestamp) => {
     if (!timestamp) return '';
     const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-    return format(date, 'dd MMM, h:mm a');
+    return format(date, 'h:mm a'); 
   };
 
   return (
-    <View style={isSender ? styles.sentMessage : styles.receivedMessage}>
-      {message.text && <Text style={styles.messageText}>{message.text}</Text>}
-
-      {message.imageUrl && (
-        <Image source={{ uri: message.imageUrl }} style={styles.image} />
-      )}
-
+    <View style={[styles.bubbleWrapper, isSender ? styles.sent : styles.received]}>
+      {message.text && <Text style={styles.text}>{message.text}</Text>}
+      {message.imageUrl && <Image source={{ uri: message.imageUrl }} style={styles.media} />}
       {message.videoUrl && (
         <Video
           source={{ uri: message.videoUrl }}
-          style={styles.video}
+          style={styles.media}
           useNativeControls
           resizeMode="cover"
         />
       )}
-
       {message.audioUrl && (
         <TouchableOpacity onPress={() => onPlayAudio(message.audioUrl)}>
-          <Text style={styles.audioPlay}>▶️ Play Audio</Text>
+          <Text style={styles.audio}>▶️ Play Audio</Text>
         </TouchableOpacity>
       )}
-
-      <Text style={styles.timestampText}>{formatTimestamp(message.timestamp)}</Text>
-
-      {isSender && (
-        <View style={styles.tickContainer}>
+      <View style={styles.meta}>
+        <Text style={styles.timestamp}>{formatTimestamp(message.timestamp)}</Text>
+        {isSender && (
           <MaterialIcons
             name="done-all"
-            size={18}
+            size={16}
             color={message.status === 'seen' ? '#39B1FF' : 'gray'}
+            style={{ marginLeft: 6 }}
           />
-        </View>
-      )}
+        )}
+      </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
-  sentMessage: {
-    alignSelf: 'flex-end',
-    backgroundColor: '#DCF8C6',
+  bubbleWrapper: {
+    marginVertical: 6,
     padding: 10,
-    borderRadius: 10,
-    marginVertical: 5,
+    borderRadius: 15,
     maxWidth: '75%',
+    shadowColor: '#000',
+    shadowOpacity: 0.05,
+    shadowOffset: { width: 0, height: 2 },
+    shadowRadius: 4,
+    elevation: 2,
   },
-  receivedMessage: {
+  sent: {
+    alignSelf: 'flex-end',
+    backgroundColor: '#D1FFD6',
+  },
+  received: {
     alignSelf: 'flex-start',
-    backgroundColor: '#E5E5EA',
-    padding: 10,
+    backgroundColor: '#F0F0F0',
+  },
+  text: {
+    fontSize: 16,
+    color: '#333',
+  },
+  media: {
+    width: 220,
+    height: 220,
     borderRadius: 10,
-    marginVertical: 5,
-    maxWidth: '75%',
+    marginTop: 8,
   },
-  messageText: { fontSize: 16 },
-  timestampText: {
-    fontSize: 11,
-    color: 'gray',
-    marginTop: 5,
-    alignSelf: 'flex-end',
-  },
-  tickContainer: {
-    alignSelf: 'flex-end',
-    marginTop: 2,
-    marginRight: 2,
-  },
-  image: {
-    width: 200,
-    height: 200,
-    borderRadius: 10,
-    marginTop: 5,
-  },
-  video: {
-    width: 200,
-    height: 200,
-    borderRadius: 10,
-    marginTop: 5,
-  },
-  audioPlay: {
+  audio: {
+    marginTop: 8,
     color: '#39FF14',
     fontWeight: 'bold',
-    marginTop: 8,
+  },
+  meta: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 6,
+    alignSelf: 'flex-end',
+  },
+  timestamp: {
+    fontSize: 11,
+    color: '#888',
   },
 });
