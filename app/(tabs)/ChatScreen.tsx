@@ -25,10 +25,9 @@ import * as ImagePicker from 'expo-image-picker';
 import { MaterialIcons } from '@expo/vector-icons';
 import uuid from 'react-native-uuid';
 import { Audio } from 'expo-av';
-
 import { format, isToday, isYesterday, startOfDay } from 'date-fns';
 
-import { auth, db } from './FirebaseConfig'; // ✅ Same folder
+import { auth, db } from './FirebaseConfig';
 import MessageBubble from '../../components/MessageBubble';
 import AudioRecorder from '../../components/AudioRecorder';
 import MediaPreview from '../../components/MediaPreview';
@@ -36,6 +35,8 @@ import MediaPreview from '../../components/MediaPreview';
 export default function ChatScreen({ route }) {
   const { chatId, receiverId, receiverName } = route.params;
   const senderId = auth.currentUser?.uid;
+
+  console.log("CHAT DEBUG:", { chatId, senderId, receiverId });
 
   const [messages, setMessages] = useState([]);
   const [messageText, setMessageText] = useState('');
@@ -175,7 +176,7 @@ export default function ChatScreen({ route }) {
 
     messages.forEach((msg) => {
       const rawDate = msg.timestamp?.toDate ? msg.timestamp.toDate() : new Date(msg.timestamp);
-      const localDate = startOfDay(rawDate);
+      const localDate = new Date(rawDate.getFullYear(), rawDate.getMonth(), rawDate.getDate());
       const dateStr = format(localDate, 'yyyy-MM-dd');
 
       if (!groups[dateStr]) groups[dateStr] = [];
@@ -186,7 +187,7 @@ export default function ChatScreen({ route }) {
 
     Object.keys(groups).forEach((dateStr) => {
       const [year, month, day] = dateStr.split('-').map(Number);
-      const parsed = new Date(year, month - 1, day); // local-safe
+      const parsed = new Date(year, month - 1, day);
 
       const label = isToday(parsed)
         ? 'Today'
@@ -233,6 +234,7 @@ export default function ChatScreen({ route }) {
         data={groupedMessages}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
+        contentContainerStyle={{ paddingBottom: 10 }}
       />
 
       <View style={styles.inputContainer}>

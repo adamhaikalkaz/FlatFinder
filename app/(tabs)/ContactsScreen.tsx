@@ -1,11 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, TouchableOpacity, StyleSheet } from 'react-native';
+import {
+  View,
+  Text,
+  FlatList,
+  TouchableOpacity,
+  StyleSheet,
+  TextInput,
+} from 'react-native';
 import { collection, getDocs } from 'firebase/firestore';
 import { auth, db } from './FirebaseConfig';
 import { useNavigation } from '@react-navigation/native';
 
 export default function ContactsScreen() {
   const [users, setUsers] = useState([]);
+  const [filteredUsers, setFilteredUsers] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
   const navigation = useNavigation();
 
   useEffect(() => {
@@ -15,16 +24,27 @@ export default function ContactsScreen() {
       const usersList = [];
 
       querySnapshot.forEach((doc) => {
-        if (doc.id !== currentUser.uid) {
-          usersList.push({ id: doc.id, ...doc.data() });
+        const data = doc.data();
+        // ✅ Make sure user_ID is Firebase Auth UID
+        if (data?.user_ID && data.user_ID !== currentUser.uid) {
+          usersList.push({ id: doc.id, ...data });
         }
       });
 
       setUsers(usersList);
+      setFilteredUsers(usersList);
     };
 
     fetchUsers();
   }, []);
+
+  const handleSearch = (text) => {
+    setSearchQuery(text);
+    const filtered = users.filter((user) =>
+      `${user.firstName} ${user.lastName}`.toLowerCase().includes(text.toLowerCase())
+    );
+    setFilteredUsers(filtered);
+  };
 
   const generateChatId = (id1, id2) => {
     return [id1, id2].sort().join('_');
@@ -32,27 +52,45 @@ export default function ContactsScreen() {
 
   const handleUserPress = (receiver) => {
     const senderId = auth.currentUser.uid;
-    const chatId = generateChatId(senderId, receiver.id);
+    const receiverId = receiver.user_ID; // ✅ MUST be Firebase Auth UID
 
-    navigation.navigate("ChatScreen", {
+    const chatId = generateChatId(senderId, receiverId);
+
+    navigation.navigate('ChatScreen', {
       chatId,
-      receiverId: receiver.id,
+      receiverId,
       receiverName: `${receiver.firstName} ${receiver.lastName}`,
     });
+  };
+
+  const formatRole = (type) => {
+    if (!type) return '';
+    return type.charAt(0).toUpperCase() + type.slice(1).toLowerCase();
   };
 
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Select someone to chat with:</Text>
+
+      <TextInput
+        style={styles.searchInput}
+        placeholder="Search users..."
+        value={searchQuery}
+        onChangeText={handleSearch}
+      />
+
       <FlatList
-        data={users}
+        data={filteredUsers}
         keyExtractor={(item) => item.id}
         renderItem={({ item }) => (
           <TouchableOpacity
             style={styles.userItem}
             onPress={() => handleUserPress(item)}
           >
-            <Text style={styles.userText}>{item.firstName} {item.lastName}</Text>
+            <Text style={styles.userText}>
+              {item.firstName} {item.lastName}
+              {item.user_type ? ` • ${formatRole(item.user_type)}` : ''}
+            </Text>
           </TouchableOpacity>
         )}
         ListEmptyComponent={<Text style={styles.emptyText}>No users found.</Text>}
@@ -62,15 +100,16 @@ export default function ContactsScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    padding: 20,
-    backgroundColor: '#fff',
-  },
-  title: {
-    fontSize: 20,
-    fontWeight: 'bold',
+  container: { flex: 1, padding: 20, backgroundColor: '#fff' },
+  title: { fontSize: 20, fontWeight: 'bold', marginBottom: 15 },
+  searchInput: {
+    height: 40,
+    borderColor: '#ccc',
+    borderWidth: 1,
+    borderRadius: 20,
+    paddingHorizontal: 15,
     marginBottom: 15,
+    backgroundColor: '#f9f9f9',
   },
   userItem: {
     padding: 15,
@@ -78,12 +117,6 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     marginBottom: 10,
   },
-  userText: {
-    fontSize: 16,
-  },
-  emptyText: {
-    marginTop: 20,
-    textAlign: 'center',
-    color: 'gray',
-  },
+  userText: { fontSize: 16 },
+  emptyText: { marginTop: 20, textAlign: 'center', color: 'gray' },
 });
