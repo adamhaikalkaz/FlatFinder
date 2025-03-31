@@ -1,11 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   View,
   TextInput,
   FlatList,
   Text,
   StyleSheet,
-  Image,
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
@@ -23,11 +22,14 @@ import {
 } from 'firebase/firestore';
 import { getStorage, ref, uploadBytes, getDownloadURL } from 'firebase/storage';
 import * as ImagePicker from 'expo-image-picker';
-import { Video } from 'expo-av';
-import uuid from 'react-native-uuid';
 import { MaterialIcons } from '@expo/vector-icons';
-import { format } from 'date-fns';
+import uuid from 'react-native-uuid';
+import { Audio } from 'expo-av';
+
 import { auth, db } from './FirebaseConfig';
+import MessageBubble from '../../components/MessageBubble';
+import AudioRecorder from '../../components/AudioRecorder';
+import MediaPreview from '../../components/MediaPreview';
 
 export default function ChatScreen({ route }) {
   const { chatId, receiverId, receiverName } = route.params;
@@ -35,9 +37,10 @@ export default function ChatScreen({ route }) {
 
   const [messages, setMessages] = useState([]);
   const [messageText, setMessageText] = useState('');
-  const [previewMedia, setPreviewMedia] = useState(null); // uri
-  const [previewType, setPreviewType] = useState(null); // 'image' | 'video'
+  const [previewMedia, setPreviewMedia] = useState(null);
+  const [previewType, setPreviewType] = useState(null);
   const [showPreviewModal, setShowPreviewModal] = useState(false);
+  const soundRef = useRef(null);
 
   useEffect(() => {
     const messagesRef = collection(db, `chats/${chatId}/messages`);
@@ -83,8 +86,8 @@ export default function ChatScreen({ route }) {
   };
 
   const pickMedia = async () => {
-    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!permissionResult.granted) {
+    const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permission.granted) {
       alert('Permission required to access media.');
       return;
     }
@@ -96,17 +99,15 @@ export default function ChatScreen({ route }) {
 
     if (!result.canceled) {
       const file = result.assets[0];
-      const isVideo = file.type === 'video';
-
       setPreviewMedia(file.uri);
-      setPreviewType(isVideo ? 'video' : 'image');
+      setPreviewType(file.type === 'video' ? 'video' : 'image');
       setShowPreviewModal(true);
     }
   };
 
   const takePhoto = async () => {
-    const permissionResult = await ImagePicker.requestCameraPermissionsAsync();
-    if (!permissionResult.granted) {
+    const permission = await ImagePicker.requestCameraPermissionsAsync();
+    if (!permission.granted) {
       alert('Camera permission required.');
       return;
     }
@@ -128,8 +129,7 @@ export default function ChatScreen({ route }) {
     const blob = await response.blob();
     const ext = previewType === 'video' ? 'mp4' : 'jpg';
     const filename = `chat_media/${chatId}/${uuid.v4()}.${ext}`;
-    const storage = getStorage();
-    const fileRef = ref(storage, filename);
+    const fileRef = ref(getStorage(), filename);
 
     await uploadBytes(fileRef, blob);
     const downloadURL = await getDownloadURL(fileRef);
@@ -137,8 +137,8 @@ export default function ChatScreen({ route }) {
     await addDoc(collection(db, `chats/${chatId}/messages`), {
       senderId,
       receiverId,
-      timestamp: serverTimestamp(),
       status: 'delivered',
+      timestamp: serverTimestamp(),
       ...(previewType === 'image' ? { imageUrl: downloadURL } : { videoUrl: downloadURL }),
     });
 
@@ -147,16 +147,30 @@ export default function ChatScreen({ route }) {
     setPreviewType(null);
   };
 
-  const formatTimestamp = (timestamp) => {
-    if (!timestamp) return '';
-    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
-    return format(date, 'dd MMM, h:mm a');
+  const handleSendAudio = async ({ audioUrl }) => {
+    await addDoc(collection(db, `chats/${chatId}/messages`), {
+      audioUrl,
+      senderId,
+      receiverId,
+      status: 'delivered',
+      timestamp: serverTimestamp(),
+    });
+  };
+
+  const playAudio = async (uri) => {
+    if (soundRef.current) {
+      await soundRef.current.unloadAsync();
+    }
+
+    const { sound } = await Audio.Sound.createAsync({ uri });
+    soundRef.current = sound;
+    await sound.playAsync();
   };
 
   return (
     <KeyboardAvoidingView
       style={styles.container}
-      behavior={Platform.OS === "ios" ? "padding" : undefined}
+      behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       keyboardVerticalOffset={90}
     >
       <Text style={styles.header}>{receiverName || 'Chat'}</Text>
@@ -164,39 +178,11 @@ export default function ChatScreen({ route }) {
       <FlatList
         data={messages}
         keyExtractor={(item) => item.id}
-        renderItem={({ item }) => {
-          const isSender = item.senderId === senderId;
-          return (
-            <View style={isSender ? styles.sentMessage : styles.receivedMessage}>
-              {item.text && <Text style={styles.messageText}>{item.text}</Text>}
-              {item.imageUrl && (
-                <Image source={{ uri: item.imageUrl }} style={styles.image} />
-              )}
-              {item.videoUrl && (
-                <Video
-                  source={{ uri: item.videoUrl }}
-                  style={styles.video}
-                  useNativeControls
-                  resizeMode="cover"
-                  isLooping
-                />
-              )}
-              <Text style={styles.timestampText}>{formatTimestamp(item.timestamp)}</Text>
-              {isSender && (
-                <View style={styles.tickContainer}>
-                  <MaterialIcons
-                    name="done-all"
-                    size={18}
-                    color={item.status === 'seen' ? '#39B1FF' : 'gray'}
-                  />
-                </View>
-              )}
-            </View>
-          );
-        }}
+        renderItem={({ item }) => (
+          <MessageBubble message={item} isSender={item.senderId === senderId} onPlayAudio={playAudio} />
+        )}
       />
 
-      {/* Message Input */}
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
@@ -213,42 +199,20 @@ export default function ChatScreen({ route }) {
         <TouchableOpacity onPress={takePhoto} style={styles.iconButton}>
           <MaterialIcons name="photo-camera" size={22} color="#39FF14" />
         </TouchableOpacity>
+        <AudioRecorder chatId={chatId} receiverId={receiverId} onSend={handleSendAudio} />
       </View>
 
-      {/* Preview Modal */}
       {showPreviewModal && previewMedia && (
-        <View style={styles.modalOverlay}>
-          <View style={styles.modalContainer}>
-            {previewType === 'image' ? (
-              <Image source={{ uri: previewMedia }} style={styles.previewImage} />
-            ) : (
-              <Video
-                source={{ uri: previewMedia }}
-                style={styles.previewImage}
-                useNativeControls
-                resizeMode="cover"
-              />
-            )}
-            <View style={styles.modalButtons}>
-              <TouchableOpacity
-                style={[styles.modalButton, { backgroundColor: '#c6ff00' }]}
-                onPress={uploadAndSendMedia}
-              >
-                <Text style={styles.modalButtonText}>Send</Text>
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={[styles.modalButton, { backgroundColor: '#ddd' }]}
-                onPress={() => {
-                  setShowPreviewModal(false);
-                  setPreviewMedia(null);
-                  setPreviewType(null);
-                }}
-              >
-                <Text style={styles.modalButtonText}>Cancel</Text>
-              </TouchableOpacity>
-            </View>
-          </View>
-        </View>
+        <MediaPreview
+          uri={previewMedia}
+          type={previewType}
+          onSend={uploadAndSendMedia}
+          onCancel={() => {
+            setShowPreviewModal(false);
+            setPreviewMedia(null);
+            setPreviewType(null);
+          }}
+        />
       )}
     </KeyboardAvoidingView>
   );
@@ -288,93 +252,11 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
     borderRadius: 20,
   },
-  sendButtonText: {
-    fontWeight: 'bold',
-    color: '#000',
-  },
+  sendButtonText: { fontWeight: 'bold', color: '#000' },
   iconButton: {
     marginLeft: 6,
     padding: 6,
     backgroundColor: '#2b2b2b',
     borderRadius: 20,
-  },
-  sentMessage: {
-    alignSelf: 'flex-end',
-    backgroundColor: '#DCF8C6',
-    padding: 10,
-    borderRadius: 10,
-    marginVertical: 5,
-    maxWidth: '75%',
-  },
-  receivedMessage: {
-    alignSelf: 'flex-start',
-    backgroundColor: '#E5E5EA',
-    padding: 10,
-    borderRadius: 10,
-    marginVertical: 5,
-    maxWidth: '75%',
-  },
-  messageText: { fontSize: 16 },
-  timestampText: {
-    fontSize: 11,
-    color: 'gray',
-    marginTop: 5,
-    alignSelf: 'flex-end',
-  },
-  tickContainer: {
-    alignSelf: 'flex-end',
-    marginTop: 2,
-    marginRight: 2,
-  },
-  image: {
-    width: 200,
-    height: 200,
-    borderRadius: 10,
-    marginTop: 5,
-  },
-  video: {
-    width: 200,
-    height: 200,
-    borderRadius: 10,
-    marginTop: 5,
-  },
-  modalOverlay: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    backgroundColor: 'rgba(0,0,0,0.7)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    zIndex: 10,
-  },
-  modalContainer: {
-    backgroundColor: '#fff',
-    borderRadius: 10,
-    padding: 20,
-    alignItems: 'center',
-    width: '80%',
-  },
-  previewImage: {
-    width: 250,
-    height: 250,
-    borderRadius: 10,
-    marginBottom: 15,
-  },
-  modalButtons: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    width: '100%',
-  },
-  modalButton: {
-    flex: 1,
-    padding: 10,
-    borderRadius: 5,
-    alignItems: 'center',
-    marginHorizontal: 5,
-  },
-  modalButtonText: {
-    fontWeight: 'bold',
   },
 });
