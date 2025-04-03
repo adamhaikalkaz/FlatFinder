@@ -97,7 +97,7 @@ export default function ReviewScreen({ navigation, route }) {
         <Image source={require("../../assets/images/FDM.png")} style={styles.bottomImage} />
         <Text style={styles.bottomText}>Flat Finder</Text>
       </View>
-
+      <View>
       <ScrollView style={styles.mainContent}>
         <View style={styles.ButtonContainer}>
           <TouchableOpacity style={styles.Button} onPress={() => setShowSort(!showSort)}>
@@ -137,6 +137,7 @@ export default function ReviewScreen({ navigation, route }) {
         ))}
       </ScrollView>
       <StatusBar style="auto" />
+      </View>
     </View>
   );
 }
@@ -165,14 +166,13 @@ function SortDropdown({ onSortChange }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#c3fb04',
+    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'flex-start',
-    paddingTop: 15,
   },
   mainContent: {
     paddingTop: 20,
-    backgroundColor: '#2b2b2b',
+    backgroundColor: '#f5f5f5',
     width: '100%',
   },
   ButtonContainer: {
@@ -232,6 +232,7 @@ const styles = StyleSheet.create({
   bottomContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
+    width: '100%',
     alignItems: 'center',
     marginBottom: 0,
     backgroundColor: '#c6ff00',

@@ -54,66 +54,89 @@ const PreviewListing = ({ route, navigation }) => {
     
 
     return (
-        <SafeAreaView style={styles.container}>
-            <Text style={styles.title}>Preview</Text>
-            
-            <ScrollView style={styles.detailsContainer} showsVerticalScrollIndicator={false}>
-                <ScrollView 
-                    horizontal 
-                    pagingEnabled 
-                    showsHorizontalScrollIndicator={false}
-                    snapToAlignment="center"
-                    snapToInterval={width}
-                    decelerationRate="fast"
-                    style={styles.imageScroll}
-                >
-                    {(imageArray.map((img, index) =>
-                        img?.uri ? (
-                            <View key={index} style={styles.imageWrapper}>
-                                <Image source={{ uri: img.uri }} style={styles.image} />
-                            </View>
-                            ) : null
-                        )
-                    )}
+    <SafeAreaView edges={['left', 'right', 'bottom']} style={{ flex: 1 }}>
+      <View style={styles.banner}>
+          <Image source={require("../../assets/images/FDM.png")} style={styles.bannerImage} />
+          <Text style={styles.bannerText}>Flat Finder</Text>
+      </View>
+      <View style={styles.container}>
+                <Text style={styles.title}>Preview</Text>
+                
+                <ScrollView style={styles.detailsContainer} showsVerticalScrollIndicator={false}>
+                    <ScrollView 
+                        horizontal 
+                        pagingEnabled 
+                        showsHorizontalScrollIndicator={false}
+                        snapToAlignment="center"
+                        snapToInterval={width}
+                        decelerationRate="fast"
+                        style={styles.imageScroll}
+                    >
+                        {(imageArray.map((img, index) =>
+                            img?.uri ? (
+                                <View key={index} style={styles.imageWrapper}>
+                                    <Image source={{ uri: img.uri }} style={styles.image} />
+                                </View>
+                                ) : null
+                            )
+                        )}
+                    </ScrollView>
+
+                    <View style={styles.propertyDetails}>
+                        <Text style={styles.address}>{Address}, {City}</Text>
+                        <Text style={styles.subText}>{City}, {Postcode}</Text>
+                        <Text style={styles.price}>£{Rent} pcm</Text>
+                        <Text style={styles.duration}>Rental Duration: {RentalDuration} months</Text>
+                    </View>
+
+                    <View style={styles.divider} />
+
+                    <View style={styles.propertyInfo}>
+                        <Text style={styles.sectionTitle}>Property Details</Text>
+                        <Text style={styles.infoText}><Text style={styles.boldText}>Type:</Text> {Type}</Text>
+                        <Text style={styles.infoText}><Text style={styles.boldText}>Bedrooms:</Text> {Beds}</Text>
+                        <Text style={styles.infoText}>{Description}</Text>
+                    </View>
+
+                    <TouchableOpacity style={styles.listingButtons}>
+                        <Text>Save to Wishlist</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={styles.listingButtons}>
+                        <Text>Chat to Landlord</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={styles.editButton} onPress={() => navigation.goBack()}>
+                        <Text style={[styles.buttonText,{color:'#fff'}]}>Edit Listing</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity style={styles.submitButton} onPress={SubmitListing}>
+                        <Text style={[styles.buttonText, {color:'#000'} ]}>Submit Listing</Text>
+                    </TouchableOpacity>
                 </ScrollView>
-
-                <View style={styles.propertyDetails}>
-                    <Text style={styles.address}>{Address}, {City}</Text>
-                    <Text style={styles.subText}>{City}, {Postcode}</Text>
-                    <Text style={styles.price}>£{Rent} pcm</Text>
-                    <Text style={styles.duration}>Rental Duration: {RentalDuration} months</Text>
-                </View>
-
-                <View style={styles.divider} />
-
-                <View style={styles.propertyInfo}>
-                    <Text style={styles.sectionTitle}>Property Details</Text>
-                    <Text style={styles.infoText}><Text style={styles.boldText}>Type:</Text> {Type}</Text>
-                    <Text style={styles.infoText}><Text style={styles.boldText}>Bedrooms:</Text> {Beds}</Text>
-                    <Text style={styles.infoText}>{Description}</Text>
-                </View>
-
-                <TouchableOpacity style={styles.listingButtons}>
-                    <Text>Save to Wishlist</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.listingButtons}>
-                    <Text>Chat to Landlord</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.editButton} onPress={() => navigation.goBack()}>
-                    <Text style={[styles.buttonText,{color:'#fff'}]}>Edit Listing</Text>
-                </TouchableOpacity>
-
-                <TouchableOpacity style={styles.submitButton} onPress={SubmitListing}>
-                    <Text style={[styles.buttonText, {color:'#000'} ]}>Submit Listing</Text>
-                </TouchableOpacity>
-            </ScrollView>
+            </View>
         </SafeAreaView>
     );
 };
 
 const styles = StyleSheet.create({
+    banner: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#c6ff00',
+        paddingHorizontal: 10,
+      },
+      bannerImage: {
+        width: 90,
+        height: 50,
+        resizeMode: 'contain',
+        marginRight: 10,
+      },
+      bannerText: {
+        fontSize: 18,
+        color: '#333',
+      },
     container: {
         flex: 1,
     },

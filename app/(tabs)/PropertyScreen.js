@@ -113,78 +113,85 @@ const PropertyScreen = ({ navigation, route }) => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginLeft: 15 }}>
-          <Ionicons name="arrow-back" size={24} color="black" />
-        </TouchableOpacity>
-        {userRole === 'landlord' && (
-          <View style={styles.headerRight}>
-            <TouchableOpacity>
-              <Ionicons name="pencil" size={24} color="green" />
+    <SafeAreaView edges={['left', 'right', 'bottom']} style={{ flex: 1 }}>
+        <View style={styles.banner}>
+            <Image source={require("../../assets/images/FDM.png")} style={styles.bannerImage} />
+            <Text style={styles.bannerText}>Flat Finder</Text>
+        </View>
+    
+      <View style={styles.container}>
+        <View style={styles.header}>
+            <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginLeft: 15 }}>
+            <Ionicons name="arrow-back" size={24} color="black" />
             </TouchableOpacity>
-            <TouchableOpacity onPress={deleteProperty}>
-              <Ionicons name="trash" size={24} color="red" />
-            </TouchableOpacity>
-          </View>
-        )}
-      </View>
-
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <FlatList
-          data={images}
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={styles.flatListContainer}
-          keyExtractor={(url, index) => index.toString()}
-          renderItem={({ item: image }) => (
-            <Image source={{ uri: image }} style={styles.image} />
-          )}
-          pagingEnabled
-          snapToAlignment="center"
-          snapToInterval={width}
-          decelerationRate="fast"
-        />
-
-        <View style={styles.propertyDetails}>
-          <Text style={styles.address}>{Address}, {City}</Text>
-          <Text style={styles.subText}>{City}, {Postcode.toUpperCase()}</Text>
-          <Text style={styles.price}>£{Rent} pcm</Text>
-          <Text style={styles.duration}>Rental Duration: {RentalDuration} months</Text>
+            {userRole === 'landlord' && (
+            <View style={styles.headerRight}>
+                <TouchableOpacity>
+                <Ionicons name="pencil" size={24} color="green" />
+                </TouchableOpacity>
+                <TouchableOpacity onPress={deleteProperty}>
+                <Ionicons name="trash" size={24} color="red" />
+                </TouchableOpacity>
+            </View>
+            )}
         </View>
 
-        <View style={styles.divider} />
+        <ScrollView showsVerticalScrollIndicator={false}>
+            <FlatList
+            data={images}
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={styles.flatListContainer}
+            keyExtractor={(url, index) => index.toString()}
+            renderItem={({ item: image }) => (
+                <Image source={{ uri: image }} style={styles.image} />
+            )}
+            pagingEnabled
+            snapToAlignment="center"
+            snapToInterval={width}
+            decelerationRate="fast"
+            />
 
-        <View style={styles.propertyInfo}>
-          <Text style={styles.sectionTitle}>Property Details</Text>
-          <Text style={styles.infoText}><Text style={styles.boldText}>Type:</Text> {Type}</Text>
-          <Text style={styles.infoText}><Text style={styles.boldText}>Bedrooms:</Text> {Beds}</Text>
-          <Text style={styles.infoText}>{Description}</Text>
+            <View style={styles.propertyDetails}>
+            <Text style={styles.address}>{Address}, {City}</Text>
+            <Text style={styles.subText}>{City}, {Postcode.toUpperCase()}</Text>
+            <Text style={styles.price}>£{Rent} pcm</Text>
+            <Text style={styles.duration}>Rental Duration: {RentalDuration} months</Text>
+            </View>
+
+            <View style={styles.divider} />
+
+            <View style={styles.propertyInfo}>
+            <Text style={styles.sectionTitle}>Property Details</Text>
+            <Text style={styles.infoText}><Text style={styles.boldText}>Type:</Text> {Type}</Text>
+            <Text style={styles.infoText}><Text style={styles.boldText}>Bedrooms:</Text> {Beds}</Text>
+            <Text style={styles.infoText}>{Description}</Text>
+            </View>
+
+            <TouchableOpacity
+            style={[styles.listingButtons, isWishlisted && styles.wishlistedButton]}
+            onPress={handleWishlist}
+            >
+            <Text style={[styles.buttonText, isWishlisted && styles.wishlistedText]}>
+                {isWishlisted ? 'Remove from Wishlist' : 'Save to Wishlist'}
+            </Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+            style={styles.listingButtons}
+            onPress={handleChatWithLandlord}
+            >
+            <Text>Chat to Landlord</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity
+            style={styles.listingButtons}
+            onPress={() => navigation.navigate("ReviewScreen", { propertyId: item.id })}
+            >
+            <Text>Reviews</Text>
+            </TouchableOpacity>
+            </ScrollView>
         </View>
-
-        <TouchableOpacity
-          style={[styles.listingButtons, isWishlisted && styles.wishlistedButton]}
-          onPress={handleWishlist}
-        >
-          <Text style={[styles.buttonText, isWishlisted && styles.wishlistedText]}>
-            {isWishlisted ? 'Remove from Wishlist' : 'Save to Wishlist'}
-          </Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.listingButtons}
-          onPress={handleChatWithLandlord}
-        >
-          <Text>Chat to Landlord</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity
-          style={styles.listingButtons}
-          onPress={() => navigation.navigate("ReviewScreen", { propertyId: item.id })}
-        >
-          <Text>Reviews</Text>
-        </TouchableOpacity>
-      </ScrollView>
     </SafeAreaView>
   );
 };
@@ -207,6 +214,23 @@ const styles = StyleSheet.create({
   sectionTitle: { fontSize: 20, fontWeight: "bold", marginBottom: 8, color: "#333" },
   infoText: { fontSize: 16, color: "#555", marginBottom: 5 },
   boldText: { fontWeight: "bold", color: "#333" },
+  banner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#c6ff00',
+    paddingHorizontal: 10,
+  },
+  bannerImage: {
+    width: 90,
+    height: 50,
+    resizeMode: 'contain',
+    marginRight: 10,
+  },
+  bannerText: {
+    fontSize: 18,
+    color: '#333',
+  },
   listingButtons: {
     padding: 12,
     borderRadius: 5,

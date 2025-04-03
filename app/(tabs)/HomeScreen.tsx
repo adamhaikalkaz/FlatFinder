@@ -184,185 +184,210 @@ export default function HomeScreen() {
 
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Flat Finder</Text>
-      <TextInput
-        style={styles.searchBar}
-        placeholder="Search for flats..."
-        value={search}
-        onChangeText={setSearch}
-      />
-
-      <View style={styles.filterSortContainer}>
-        {/* Button to open modal */}
-        <Button style={filterButtonStyle} mode="contained" onPress={() => setModalVisible(true)}>
-          <View style={styles.buttonContent}>
-            <Image source={require('../../assets/images/filter.png')} style={styles.filterSortImages} />
-            <Text style={filterLabelStyle}>Filter</Text>
-          </View>
-        </Button>
-
-        {/* Button to open modal */}
-        <Button style={sortButtonStyle} mode="contained" onPress={() => setModalVisible2(true)}>
-          <View style={styles.buttonContent}>
-            <Image source={require('../../assets/images/sort.png')} style={styles.filterSortImages} />
-            <Text style={sortLabelStyle}>Sort</Text>
-          </View>
-        </Button>
+    <View style={{ flex: 1, backgroundColor: '#fff' }}>
+      <View style={styles.banner}>
+        <Image source={require("../../assets/images/FDM.png")} style={styles.bannerImage} />
+        <Text style={styles.bannerText}>Flat Finder</Text>
       </View>
+      
+      <View style={styles.container}>
+
+        <Text style={styles.title}>Flat Finder</Text>
+        <TextInput
+          style={styles.searchBar}
+          placeholder="Search for flats..."
+          value={search}
+          onChangeText={setSearch}
+        />
+
+        <View style={styles.filterSortContainer}>
+          {/* Button to open modal */}
+          <Button style={filterButtonStyle} mode="contained" onPress={() => setModalVisible(true)}>
+            <View style={styles.buttonContent}>
+              <Image source={require('../../assets/images/filter.png')} style={styles.filterSortImages} />
+              <Text style={filterLabelStyle}>Filter</Text>
+            </View>
+          </Button>
+
+          {/* Button to open modal */}
+          <Button style={sortButtonStyle} mode="contained" onPress={() => setModalVisible2(true)}>
+            <View style={styles.buttonContent}>
+              <Image source={require('../../assets/images/sort.png')} style={styles.filterSortImages} />
+              <Text style={sortLabelStyle}>Sort</Text>
+            </View>
+          </Button>
+        </View>
 
 
-      {/* Modal for Filter Options */}
-      <Modal visible={modalVisible} animationType="slide" transparent>
+        {/* Modal for Filter Options */}
+        <Modal visible={modalVisible} animationType="slide" transparent>
+          <View style={styles.modalOverlay}>
+            <View style={styles.modalContainer}>
+              <Text style={styles.title2}>Filters</Text>
+
+
+              {/* Bed Number Slider */}
+              <Text>Min beds: {bedNumber}</Text>
+              <Slider
+                style={{ width: "100%", height: 40 }}
+                minimumValue={1}
+                maximumValue={4}
+                step={1}
+                value={bedNumber}
+                onValueChange={(value) => setBedNumber(value)}
+              />
+
+              {/* Price Range Slider */}
+              <Text>Max pcm: £{priceRange}</Text>
+              <Slider
+                style={{ width: "100%", height: 40 }}
+                minimumValue={500}
+                maximumValue={4000}
+                step={100}
+                value={priceRange}
+                onValueChange={(value) => setPriceRange(value)}
+              />
+
+              {/* Rental Duration Slider */}
+              <Text>Min Rental Duration: {rentalDuration} months</Text>
+              <Slider
+                style={{ width: "100%", height: 40 }}
+                minimumValue={1}
+                maximumValue={12}
+                step={1}
+                value={rentalDuration}
+                onValueChange={(value) => setRentalDuration(value)}
+              />
+
+              {/* Checkbox for Balcony */}
+              {/* <View style={styles.filterRow}>
+                <Text>Has Balcony</Text>
+                <Switch value={hasBalcony} onValueChange={setHasBalcony} />
+              </View> */}
+
+              {/* Checkbox for Pets Allowed */}
+              {/* <View style={styles.filterRow}>
+                <Text>Allows Pets</Text>
+                <Switch value={allowsPets} onValueChange={setAllowsPets} />
+              </View> */}
+
+
+
+              {/* Buttons */}
+              <Button labelStyle={styles.clearFiltersLabel} mode="outlined" onPress={() => {handleClearFilters()}}>
+                  Clear Filters
+              </Button>
+              <View style={styles.buttonRow}>
+                <Button labelStyle={styles.cancelButtonLabel} mode="outlined" onPress={() => {handleCancelFilters()}}>
+                  Cancel
+                </Button>
+                <Button
+                labelStyle={styles.applyButtonLabel}
+                  style={styles.applyButton}
+                  mode="contained"
+                  onPress={() => {handleApplyFilters()}}
+                >
+                  Apply
+                </Button>
+              </View>
+            </View>
+          </View>
+        </Modal>
+
+        {/* Modal for Filter Options */}
+        <Modal visible={modalVisible2} animationType="slide" transparent>
         <View style={styles.modalOverlay}>
-          <View style={styles.modalContainer}>
-            <Text style={styles.title2}>Filters</Text>
+            <View style={styles.modalContainer}>
+              <Text style={styles.title2}>Sort By</Text>
+        
+              {/* Dropdown for sorting options */}
+              <Picker
+                selectedValue={selectedSortOption}
+                onValueChange={(value) => setSelectedSortOption(value)}  // Update selected option
+                style={{
+                  height: 60,
+                  borderColor: '#ccc',
+                  borderWidth: 1,
+                  borderRadius: 5,
+                  marginBottom: 10,
+                }}
+              >
+                <Picker.Item label="Price: Low to high" value="priceAsc" />
+                <Picker.Item label="Price: High to low" value="priceDesc" />
+                <Picker.Item label="Number of Bedrooms" value="bedrooms" />
+                <Picker.Item label="Rental Duration" value="rental_duration" />
+              </Picker>
 
-
-            {/* Bed Number Slider */}
-            <Text>Min beds: {bedNumber}</Text>
-            <Slider
-              style={{ width: "100%", height: 40 }}
-              minimumValue={1}
-              maximumValue={4}
-              step={1}
-              value={bedNumber}
-              onValueChange={(value) => setBedNumber(value)}
-            />
-
-            {/* Price Range Slider */}
-            <Text>Max pcm: £{priceRange}</Text>
-            <Slider
-              style={{ width: "100%", height: 40 }}
-              minimumValue={500}
-              maximumValue={4000}
-              step={100}
-              value={priceRange}
-              onValueChange={(value) => setPriceRange(value)}
-            />
-
-            {/* Rental Duration Slider */}
-            <Text>Min Rental Duration: {rentalDuration} months</Text>
-            <Slider
-              style={{ width: "100%", height: 40 }}
-              minimumValue={1}
-              maximumValue={12}
-              step={1}
-              value={rentalDuration}
-              onValueChange={(value) => setRentalDuration(value)}
-            />
-
-            {/* Checkbox for Balcony */}
-            {/* <View style={styles.filterRow}>
-              <Text>Has Balcony</Text>
-              <Switch value={hasBalcony} onValueChange={setHasBalcony} />
-            </View> */}
-
-            {/* Checkbox for Pets Allowed */}
-            {/* <View style={styles.filterRow}>
-              <Text>Allows Pets</Text>
-              <Switch value={allowsPets} onValueChange={setAllowsPets} />
-            </View> */}
-
-
-
-            {/* Buttons */}
-            <Button labelStyle={styles.clearFiltersLabel} mode="outlined" onPress={() => {handleClearFilters()}}>
-                Clear Filters
-            </Button>
-            <View style={styles.buttonRow}>
-              <Button labelStyle={styles.cancelButtonLabel} mode="outlined" onPress={() => {handleCancelFilters()}}>
+              {/* Buttons */}
+              <Button labelStyle={styles.clearFiltersLabel} mode="outlined" onPress={() => {handleClearSort()}}>
+                  Clear Sort
+              </Button>
+              <View style={styles.buttonRow}>
+              <Button labelStyle={styles.cancelButtonLabel} mode="outlined" onPress={() => {handleCancelSort()}}>
                 Cancel
               </Button>
               <Button
-              labelStyle={styles.applyButtonLabel}
+                labelStyle={styles.applyButtonLabel}
                 style={styles.applyButton}
-                mode="contained"
-                onPress={() => {handleApplyFilters()}}
-              >
+                mode="contained" onPress={() => {handleApplySort()}}>
                 Apply
               </Button>
+              </View>
             </View>
           </View>
+        </Modal>
+        
+        { userRole === "landlord" &&
+          (<TouchableOpacity style={styles.newListing} onPress={() => navigation.navigate("ListingForm")}>
+            <Text style={styles.buttonText}>Add New Listing</Text>
+        </TouchableOpacity>)}
+        <FlatList
+            data={filteredListing}
+            keyExtractor={item => item.id}
+            showsVerticalScrollIndicator={false}
+            renderItem={({ item }) => (
+                <TouchableOpacity style={styles.flatButton} onPress={() => navigation.navigate("PropertyScreen", {item,userRole})}>
+                    <Image 
+                        source={{ uri: item.images[0] }} 
+                        style={{ width: "100%", height: 250, borderRadius: 10 }}
+                        resizeMode="cover"
+                    />
+                    <View style={styles.propertyInfoContainer}>
+                      <Text style={styles.propertyInfo1}>{item.Address}, {item.City} </Text>
+                      <Text style={[styles.propertyInfo1, { fontSize: 16 }]}>£{item.Rent} pcm </Text>
+                    </View>
+                    <View style={styles.propertyInfo2}>
+                      <Image source={require('../../assets/images/bed.png')} style={{ width: 30, height: 30 }} />
+                      <Text style={{fontSize: 15, paddingTop: 5, paddingLeft: 5,}}>{item.Beds} Beds</Text>
+                      {/*<Image source={require('./assets/bathroom.png')} style={{ width: 30, height: 30 }} />
+                      <Text style={{fontSize: 20, paddingLeft: 10, paddingRight: 10}}>1 bath</Text>*/}
+                    </View>
+                </TouchableOpacity>
+            )}
+        />
         </View>
-      </Modal>
-
-      {/* Modal for Filter Options */}
-      <Modal visible={modalVisible2} animationType="slide" transparent>
-      <View style={styles.modalOverlay}>
-          <View style={styles.modalContainer}>
-            <Text style={styles.title2}>Sort By</Text>
-      
-            {/* Dropdown for sorting options */}
-            <Picker
-              selectedValue={selectedSortOption}
-              onValueChange={(value) => setSelectedSortOption(value)}  // Update selected option
-              style={{
-                height: 60,
-                borderColor: '#ccc',
-                borderWidth: 1,
-                borderRadius: 5,
-                marginBottom: 10,
-              }}
-            >
-              <Picker.Item label="Price: Low to high" value="priceAsc" />
-              <Picker.Item label="Price: High to low" value="priceDesc" />
-              <Picker.Item label="Number of Bedrooms" value="bedrooms" />
-              <Picker.Item label="Rental Duration" value="rental_duration" />
-            </Picker>
-
-            {/* Buttons */}
-            <Button labelStyle={styles.clearFiltersLabel} mode="outlined" onPress={() => {handleClearSort()}}>
-                Clear Sort
-            </Button>
-            <View style={styles.buttonRow}>
-            <Button labelStyle={styles.cancelButtonLabel} mode="outlined" onPress={() => {handleCancelSort()}}>
-              Cancel
-            </Button>
-            <Button
-              labelStyle={styles.applyButtonLabel}
-              style={styles.applyButton}
-              mode="contained" onPress={() => {handleApplySort()}}>
-              Apply
-            </Button>
-            </View>
-          </View>
-        </View>
-      </Modal>
-      
-      { userRole === "landlord" &&
-        (<TouchableOpacity style={styles.newListing} onPress={() => navigation.navigate("ListingForm")}>
-          <Text style={styles.buttonText}>Add New Listing</Text>
-      </TouchableOpacity>)}
-      <FlatList
-          data={filteredListing}
-          keyExtractor={item => item.id}
-          showsVerticalScrollIndicator={false}
-          renderItem={({ item }) => (
-              <TouchableOpacity style={styles.flatButton} onPress={() => navigation.navigate("PropertyScreen", {item,userRole})}>
-                  <Image 
-                      source={{ uri: item.images[0] }} 
-                      style={{ width: "100%", height: 250, borderRadius: 10 }}
-                      resizeMode="cover"
-                  />
-                  <View style={styles.propertyInfoContainer}>
-                    <Text style={styles.propertyInfo1}>{item.Address}, {item.City} </Text>
-                    <Text style={[styles.propertyInfo1, { fontSize: 16 }]}>£{item.Rent} pcm </Text>
-                  </View>
-                  <View style={styles.propertyInfo2}>
-                    <Image source={require('../../assets/images/bed.png')} style={{ width: 30, height: 30 }} />
-                    <Text style={{fontSize: 15, paddingTop: 5, paddingLeft: 5,}}>{item.Beds} Beds</Text>
-                    {/*<Image source={require('./assets/bathroom.png')} style={{ width: 30, height: 30 }} />
-                    <Text style={{fontSize: 20, paddingLeft: 10, paddingRight: 10}}>1 bath</Text>*/}
-                  </View>
-              </TouchableOpacity>
-          )}
-      />
       </View>
   );
 };
 
 const styles = StyleSheet.create({
+  banner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#c6ff00',
+    paddingHorizontal: 10,
+  },
+  bannerImage: {
+    width: 90,
+    height: 50,
+    resizeMode: 'contain',
+    marginRight: 10,
+  },
+  bannerText: {
+    fontSize: 18,
+    color: '#333',
+  },
   container: {
     flex: 1,
     padding: 16,
