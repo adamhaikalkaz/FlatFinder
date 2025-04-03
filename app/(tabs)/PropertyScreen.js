@@ -168,21 +168,21 @@ const PropertyScreen = ({ navigation, route }) => {
             <Text style={styles.infoText}>{Description}</Text>
             </View>
 
-            <TouchableOpacity
-            style={[styles.listingButtons, isWishlisted && styles.wishlistedButton]}
-            onPress={handleWishlist}
-            >
-            <Text style={[styles.buttonText, isWishlisted && styles.wishlistedText]}>
-                {isWishlisted ? 'Remove from Wishlist' : 'Save to Wishlist'}
-            </Text>
-            </TouchableOpacity>
+        <TouchableOpacity
+          style={[styles.listingButtons, isWishlisted && styles.wishlistedButton]}
+          onPress={handleWishlist}
+        >
+          <Text style={[styles.buttonText, isWishlisted && styles.wishlistedText]}>
+            {isWishlisted ? 'Remove from Wishlist' : 'Save to Wishlist'}
+          </Text>
+        </TouchableOpacity>
 
-            <TouchableOpacity
-            style={styles.listingButtons}
-            onPress={handleChatWithLandlord}
-            >
-            <Text>Chat to Landlord</Text>
-            </TouchableOpacity>
+        <TouchableOpacity
+          style={styles.listingButtons}
+          onPress={handleChatWithLandlord}
+        >
+          <Text>Chat to Landlord</Text>
+        </TouchableOpacity>
 
             <TouchableOpacity
             style={styles.listingButtons}
