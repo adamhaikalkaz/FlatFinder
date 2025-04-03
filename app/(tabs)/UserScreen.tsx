@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, TouchableOpacity, Alert } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, Alert, ScrollView } from 'react-native';
 import { getAuth, signOut } from 'firebase/auth';
 import { getFirestore, doc, getDoc, setDoc } from 'firebase/firestore';
 import * as ImagePicker from 'expo-image-picker';
@@ -106,7 +106,7 @@ export default function UserScreen({ setIsAuthenticated }) {
           <Text style={{ color: 'blue', marginTop: 10 }}>Change Profile Picture</Text>
         </TouchableOpacity>
       </View>
-      <View style={styles.body}>
+      <ScrollView style={styles.body}>
         <Text style={{ fontSize: 20, marginBottom: 10 }}>Account Settings</Text>
         <TouchableOpacity style={styles.button}>
           <Text style={styles.buttonText}>Personal Information</Text>
@@ -133,7 +133,7 @@ export default function UserScreen({ setIsAuthenticated }) {
         <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
           <Text style={styles.buttonText}>Log Out</Text>
         </TouchableOpacity>
-      </View>
+      </ScrollView>
     </View>
   );
 }
