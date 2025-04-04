@@ -91,6 +91,10 @@ export default function UserScreen({ setIsAuthenticated }) {
 
   return (
     <View style={styles.container}>
+      <View style={styles.bottomContainer}>
+        <Image source={require("../../assets/images/FDM.png")} style={styles.bottomImage} />
+        <Text style={styles.bottomText}>Flat Finder</Text>
+      </View>
       <View style={styles.header}>
         <Image
           style={styles.profileImage}
@@ -184,5 +188,23 @@ const styles = StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: 'black',
     marginHorizontal: 169,
+  },
+  bottomContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    width: '100%',
+    alignItems: 'center',
+    marginBottom: 0,
+    backgroundColor: '#c6ff00',
+  },
+  bottomImage: {
+    width: 90,
+    height: 50,
+    resizeMode: 'contain',
+    marginRight: 10,
+  },
+  bottomText: {
+    fontSize: 18,
+    color: '#333',
   },
 });

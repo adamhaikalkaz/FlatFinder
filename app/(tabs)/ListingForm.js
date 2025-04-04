@@ -61,64 +61,86 @@ const ListingForm = ({navigation}) => {
 
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>Listing Form</Text>
-      <ScrollView showsVerticalScrollIndicator={false}>
-        <View style={styles.imageContainer}>
-            <TouchableOpacity style={styles.imageUploadButton} onPress={pickImage}>
-                <Text style={styles.UploadText}> + Upload Image</Text>
-            </TouchableOpacity>
-            <ScrollView
-                horizontal
-                pagingEnabled
-                showsHorizontalScrollIndicator={false}
-                snapToAlignment="center"
-                snapToInterval={width}
-                decelerationRate="fast"
-                style={{flexGrow: 0}}>
-                {images.length > 0 &&
-                    images.map((img, index) =>
-                        img?.uri ? (
-                            <View key={index} style={styles.imageWrapper}>
-                                <Image source={{ uri: img.uri }} style={styles.image} />
-                            </View>
-                        ) : null
-                    )}
-            </ScrollView>
-        </View>
-        <View>
-          <Text style={styles.formTitle}>Address</Text>
-          <TextInput style={[styles.input, errors.Address && { borderColor: "red" }]} value={Address} placeholder='Address' placeholderTextColor={'#999'} onChangeText={(text) => setAddress(text)}/>
-          <View style={styles.rowInput}>
-            <TextInput style={[styles.input, styles.halfInput, errors.City && { borderColor: "red" }]} value={City} placeholder="City" placeholderTextColor={'#999'} onChangeText={(text) => setCity(text)}/>
-            <TextInput style={[styles.input, styles.halfInput, errors.Postcode && { borderColor: "red" }]} value={Postcode} placeholder="Postcode" placeholderTextColor={'#999'} onChangeText={(text) => setPostcode(text)}/>
+    <SafeAreaView edges={['left', 'right', 'bottom']} style={{ flex: 1 }}>
+      <View style={styles.banner}>
+          <Image source={require("../../assets/images/FDM.png")} style={styles.bannerImage} />
+          <Text style={styles.bannerText}>Flat Finder</Text>
+      </View>
+      <View style={styles.container}>
+        <Text style={styles.title}>Listing Form</Text>
+        <ScrollView showsVerticalScrollIndicator={false}>
+          <View style={styles.imageContainer}>
+              <TouchableOpacity style={styles.imageUploadButton} onPress={pickImage}>
+                  <Text style={styles.UploadText}> + Upload Image</Text>
+              </TouchableOpacity>
+              <ScrollView
+                  horizontal
+                  pagingEnabled
+                  showsHorizontalScrollIndicator={false}
+                  snapToAlignment="center"
+                  snapToInterval={width}
+                  decelerationRate="fast"
+                  style={{flexGrow: 0}}>
+                  {images.length > 0 &&
+                      images.map((img, index) =>
+                          img?.uri ? (
+                              <View key={index} style={styles.imageWrapper}>
+                                  <Image source={{ uri: img.uri }} style={styles.image} />
+                              </View>
+                          ) : null
+                      )}
+              </ScrollView>
           </View>
+          <View>
+            <Text style={styles.formTitle}>Address</Text>
+            <TextInput style={[styles.input, errors.Address && { borderColor: "red" }]} value={Address} placeholder='Address' placeholderTextColor={'#999'} onChangeText={(text) => setAddress(text)}/>
+            <View style={styles.rowInput}>
+              <TextInput style={[styles.input, styles.halfInput, errors.City && { borderColor: "red" }]} value={City} placeholder="City" placeholderTextColor={'#999'} onChangeText={(text) => setCity(text)}/>
+              <TextInput style={[styles.input, styles.halfInput, errors.Postcode && { borderColor: "red" }]} value={Postcode} placeholder="Postcode" placeholderTextColor={'#999'} onChangeText={(text) => setPostcode(text)}/>
+            </View>
 
-          <Text style={styles.formTitle}>Rental Duration (Months) :</Text>
-          <TextInput style={[styles.input, errors.RentalDuration && { borderColor: "red" }]} value={RentalDuration} placeholder="Rental Duration (Months)" placeholderTextColor={'#999'} keyboardType='numeric' onChangeText={(text) => setRentalDuration(text)}/>
+            <Text style={styles.formTitle}>Rental Duration (Months) :</Text>
+            <TextInput style={[styles.input, errors.RentalDuration && { borderColor: "red" }]} value={RentalDuration} placeholder="Rental Duration (Months)" placeholderTextColor={'#999'} keyboardType='numeric' onChangeText={(text) => setRentalDuration(text)}/>
 
-          <Text style={styles.formTitle}>Rental Price (£ per pcm)</Text>
-          <TextInput style={[styles.input, errors.Rent && { borderColor: "red" }]} value={Rent} placeholder="Price £:" placeholderTextColor={'#999'} keyboardType='numeric' onChangeText={(text) => setRent(text)}/>
+            <Text style={styles.formTitle}>Rental Price (£ per pcm)</Text>
+            <TextInput style={[styles.input, errors.Rent && { borderColor: "red" }]} value={Rent} placeholder="Price £:" placeholderTextColor={'#999'} keyboardType='numeric' onChangeText={(text) => setRent(text)}/>
 
-          <Text style={styles.formTitle}>Property Details</Text>
-          <TextInput style={[styles.input, errors.Type && { borderColor: "red" }]} value={Type} placeholder="Type" placeholderTextColor={'#999'} onChangeText={(text) => setType(text)}/>
-          <TextInput style={[styles.input, errors.Beds && { borderColor: "red" }]} value={Beds} placeholder="Number of Bedrooms" placeholderTextColor={'#999'} keyboardType='numeric' onChangeText={(text) => setBeds(text)}/>
-          <TextInput style={[styles.input, errors.Description && { borderColor: "red" }]} value={Description} placeholder="Description" multiline={true} placeholderTextColor={'#999'} onChangeText={(text) => setDescription(text)}/>
-
-
-          <TouchableOpacity style={styles.previewButton} onPress={handlePreviewButton} >
-                <Text style={{ fontWeight:'bold' }}>Preview Listing</Text>
-          </TouchableOpacity>
+            <Text style={styles.formTitle}>Property Details</Text>
+            <TextInput style={[styles.input, errors.Type && { borderColor: "red" }]} value={Type} placeholder="Type" placeholderTextColor={'#999'} onChangeText={(text) => setType(text)}/>
+            <TextInput style={[styles.input, errors.Beds && { borderColor: "red" }]} value={Beds} placeholder="Number of Bedrooms" placeholderTextColor={'#999'} keyboardType='numeric' onChangeText={(text) => setBeds(text)}/>
+            <TextInput style={[styles.input, errors.Description && { borderColor: "red" }]} value={Description} placeholder="Description" multiline={true} placeholderTextColor={'#999'} onChangeText={(text) => setDescription(text)}/>
 
 
-        </View>
-      </ScrollView>
-      
+            <TouchableOpacity style={styles.previewButton} onPress={handlePreviewButton} >
+                  <Text style={{ fontWeight:'bold' }}>Preview Listing</Text>
+            </TouchableOpacity>
+
+
+          </View>
+        </ScrollView>
+      </View>
     </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  banner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#c6ff00',
+    paddingHorizontal: 10,
+  },
+  bannerImage: {
+    width: 90,
+    height: 50,
+    resizeMode: 'contain',
+    marginRight: 10,
+  },
+  bannerText: {
+    fontSize: 18,
+    color: '#333',
+  },
   container: {
     flex: 1,
     backgroundColor:'#fff',

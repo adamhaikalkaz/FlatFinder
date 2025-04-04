@@ -74,9 +74,9 @@ export default function AddReviewScreen({ navigation, route }) {
     <View style={styles.container}>
       <Text style={styles.header}>Add Your Review</Text>
       <View style={styles.main}>
-        <Text style={{color:"white", fontWeight:'bold'}}>Enter rating from 1-5:</Text>
+        <Text style={{color:"black", fontWeight:'bold'}}>Enter rating from 1-5:</Text>
         <TextInput style={styles.input} placeholder="Rating (1-5)" keyboardType="numeric" value={rating} onChangeText={setRating} />
-        <Text style={{color:"white", fontWeight:'bold'}}>Write your review:</Text>
+        <Text style={{color:"black", fontWeight:'bold'}}>Write your review:</Text>
         <TextInput style={styles.input} placeholder="Write your review..." value={reviewText} onChangeText={setReviewText} multiline />
         
         <TouchableOpacity style={styles.submitButton} onPress={handleSubmit}>
@@ -92,7 +92,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     //padding: 20,
-    backgroundColor: '#2b2b2b',
+    backgroundColor: '#fff',
     color:'black',
     width: '100%',
   },
@@ -111,7 +111,7 @@ const styles = StyleSheet.create({
     borderRadius: 5,
     padding: 10,
     marginBottom: 30,
-    color: 'white',
+    color: 'black',
   },
   submitButton: {
     backgroundColor: '#c3fb04',

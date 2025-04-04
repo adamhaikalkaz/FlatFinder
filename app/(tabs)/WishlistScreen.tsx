@@ -129,26 +129,53 @@ export default function WishlistScreen() {
     );
   };
 
+ 
   return (
-    <SafeAreaView style={styles.container}>
-      <Text style={styles.title}>My Wishlist</Text>
-      {wishlistItems.length === 0 ? (
-        <View style={styles.emptyContainer}>
-          <Text style={styles.emptyText}>Your wishlist is empty</Text>
-        </View>
-      ) : (
-        <FlatList
-          data={wishlistItems}
-          renderItem={renderItem}
-          keyExtractor={item => item.id}
-          contentContainerStyle={styles.listContainer}
-        />
-      )}
-    </SafeAreaView>
+    <View style={{ flex: 1 }}>
+      <View style={styles.banner}>
+        <Image source={require("../../assets/images/FDM.png")} style={styles.bannerImage} />
+        <Text style={styles.bannerText}>Flat Finder</Text>
+      </View>
+  
+
+      {/* Padded Content */}
+      <SafeAreaView style={styles.container}>
+        <Text style={styles.title}>My Wishlist</Text>
+        {wishlistItems.length === 0 ? (
+          <View style={styles.emptyContainer}>
+            <Text style={styles.emptyText}>Your wishlist is empty</Text>
+          </View>
+        ) : (
+          <FlatList
+            data={wishlistItems}
+            renderItem={renderItem}
+            keyExtractor={item => item.id}
+            contentContainerStyle={styles.listContainer}
+          />
+        )}
+      </SafeAreaView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
+  banner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#c6ff00',
+    paddingHorizontal: 10,
+  },
+  bannerImage: {
+    width: 90,
+    height: 50,
+    resizeMode: 'contain',
+    marginRight: 10,
+  },
+  bannerText: {
+    fontSize: 18,
+    color: '#333',
+  },
   container: {
     flex: 1,
     backgroundColor: '#f5f5f5',

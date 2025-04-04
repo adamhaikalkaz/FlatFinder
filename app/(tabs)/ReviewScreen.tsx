@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { StatusBar, StyleSheet, Text, View, ScrollView, TouchableOpacity, Image } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
-import { getFirestore, collection, getDocs, orderBy, query, where, limit } from 'firebase/firestore';
+import { getFirestore, collection, getDocs, orderBy, query, where, limit, doc, getDoc } from 'firebase/firestore';
+import { db, auth, firestore } from './FirebaseConfig';
 
 async function getReviews(propertyId: string, sortBy = "date_time_desc") {
   const db = getFirestore();
@@ -62,7 +63,7 @@ async function getReviews(propertyId: string, sortBy = "date_time_desc") {
 
 export default function ReviewScreen({ navigation, route }) {
   const { propertyId } = route.params;
-
+  const [userRole, setUserRole] = useState(null)
   const [showSort, setShowSort] = useState(false);
   const [reviews, setReviews] = useState([]);
   const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
@@ -79,6 +80,29 @@ export default function ReviewScreen({ navigation, route }) {
     }
     fetchReviews();
   }, [sortBy]);
+
+  useEffect(() => {
+    const getUserRole = async() => {
+      const user = auth.currentUser; // Get the authenticated user
+      console.log("finding user roles........................................... "+ user.uid)
+      
+      if (user) {
+        const userRef = doc(db,"user", user.uid)
+        const userDoc = await getDoc(userRef)
+    
+        if (userDoc.exists()) {
+          const userData = userDoc.data();
+          setUserRole(userData.user_type);
+          console.log(".........................user Role : "+ userRole);
+        } else {
+          console.log('No such user document!');
+          console.log(userRole);
+          return null;
+        }
+      }
+    };
+    getUserRole();
+  })
 
   function handleSortChange(option) {
     let firestoreSortOption = "date_time_desc";
@@ -97,16 +121,17 @@ export default function ReviewScreen({ navigation, route }) {
         <Image source={require("../../assets/images/FDM.png")} style={styles.bottomImage} />
         <Text style={styles.bottomText}>Flat Finder</Text>
       </View>
-
+      <View>
       <ScrollView style={styles.mainContent}>
         <View style={styles.ButtonContainer}>
           <TouchableOpacity style={styles.Button} onPress={() => setShowSort(!showSort)}>
             <Text>Sort</Text>
           </TouchableOpacity>
 
+         {userRole === "employee" &&
           <TouchableOpacity style={styles.Button} onPress={() => navigation.navigate('AddReviewScreen', {propertyId})}>
             <Text>Add Review</Text>
-          </TouchableOpacity>
+          </TouchableOpacity>}
         </View>
 
         {showSort && <SortDropdown onSortChange={handleSortChange} />}
@@ -137,6 +162,7 @@ export default function ReviewScreen({ navigation, route }) {
         ))}
       </ScrollView>
       <StatusBar style="auto" />
+      </View>
     </View>
   );
 }
@@ -165,14 +191,13 @@ function SortDropdown({ onSortChange }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#c3fb04',
+    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'flex-start',
-    paddingTop: 15,
   },
   mainContent: {
     paddingTop: 20,
-    backgroundColor: '#2b2b2b',
+    backgroundColor: '#f5f5f5',
     width: '100%',
   },
   ButtonContainer: {
@@ -232,6 +257,7 @@ const styles = StyleSheet.create({
   bottomContainer: {
     flexDirection: 'row',
     justifyContent: 'center',
+    width: '100%',
     alignItems: 'center',
     marginBottom: 0,
     backgroundColor: '#c6ff00',

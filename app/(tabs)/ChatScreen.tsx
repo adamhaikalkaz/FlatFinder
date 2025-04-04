@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   KeyboardAvoidingView,
   Platform,
+  Image,
 } from 'react-native';
 import {
   collection,
@@ -235,16 +236,22 @@ export default function ChatScreen({ route }) {
       behavior={Platform.OS === 'ios' ? 'padding' : undefined}
       keyboardVerticalOffset={90}
     >
+      <View style={styles.banner}>
+        <Image source={require("../../assets/images/FDM.png")} style={styles.bannerImage} />
+        <Text style={styles.bannerText}>Flat Finder</Text>
+      </View>
+  
+      {/* Header */}
       <Text style={styles.header}>{receiverName || 'Chat'}</Text>
-
+  
+      {/* Message List */}
       <FlatList
-        ref={flatListRef} // ✅ FlatList ref
-        data={groupedMessages}
+        ref={flatListRef}
+        data={groupMessagesByDate(messages)}
         keyExtractor={(item) => item.id}
         renderItem={renderItem}
         contentContainerStyle={{ paddingBottom: 10 }}
       />
-
       <View style={styles.inputContainer}>
         <TextInput
           style={styles.input}
@@ -281,6 +288,23 @@ export default function ChatScreen({ route }) {
 }
 
 const styles = StyleSheet.create({
+  banner: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: '#c6ff00',
+    paddingHorizontal: 10,
+  },
+  bannerImage: {
+    width: 90,
+    height: 50,
+    resizeMode: 'contain',
+    marginRight: 10,
+  },
+  bannerText: {
+    fontSize: 18,
+    color: '#333',
+  },
   container: { flex: 1, backgroundColor: '#f5f7fa' },
   header: {
     fontSize: 20,
