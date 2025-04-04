@@ -121,7 +121,7 @@ const PropertyScreen = ({ navigation, route }) => {
     
       <View style={styles.container}>
         <View style={styles.header}>
-            <TouchableOpacity onPress={() => navigation.goBack()} style={{ marginLeft: 15 }}>
+            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerLeft}>
             <Ionicons name="arrow-back" size={24} color="black" />
             </TouchableOpacity>
             {userRole === 'landlord' && (
@@ -254,6 +254,9 @@ const styles = StyleSheet.create({
   buttonText: {
     fontSize: 16,
     fontWeight: "bold",
+  },
+  headerLeft : {
+    marginLeft: 15
   },
   headerRight: {
     flexDirection: 'row',
