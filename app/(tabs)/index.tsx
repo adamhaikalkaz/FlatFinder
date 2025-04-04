@@ -77,14 +77,14 @@ function MyTabs({ setIsAuthenticated }) {
           return (
             <Image
               source={imageSource}
-              style={{ width: size, height: size, marginTop: 20, tintColor: focused ? '#39FF14' : 'gray' }}
+              style={{ width: size, height: size, marginTop: 20, tintColor: focused ? '#c6ff00' : 'gray' }}
               resizeMode="contain"
             />
           );
         },
         headerShown: false,
         tabBarShowLabel: false,
-        tabBarActiveTintColor: '#39FF14',
+        tabBarActiveTintColor: '#c6ff00',
         tabBarInactiveTintColor: 'gray',
         tabBarStyle: {
           backgroundColor: 'black',
