@@ -341,7 +341,10 @@ export default function HomeScreen() {
           (<TouchableOpacity style={styles.newListing} onPress={() => navigation.navigate("ListingForm")}>
             <Text style={styles.buttonText}>Add New Listing</Text>
         </TouchableOpacity>)}
-        <FlatList
+        {filteredListing.length === 0 ? (
+            <Text style={ styles.NoListings }>No listings found.</Text>
+        ) : (
+          <FlatList
             data={filteredListing}
             keyExtractor={item => item.id}
             showsVerticalScrollIndicator={false}
@@ -364,7 +367,7 @@ export default function HomeScreen() {
                     </View>
                 </TouchableOpacity>
             )}
-        />
+        />)}
         </View>
       </View>
   );
@@ -547,4 +550,9 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     color: 'black',
   },
+  NoListings :{
+    fontSize: 18, 
+    textAlign: 'center', 
+    marginTop: 20
+  }
 });
