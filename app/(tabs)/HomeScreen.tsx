@@ -56,8 +56,6 @@ export default function HomeScreen() {
         if (user) {
           const userRef = doc(db,"user", user.uid)
           const userDoc = await getDoc(userRef)
-
-          console.log(user.uid + "from home screen");
       
           if (userDoc.exists()) {
             const userData = userDoc.data();
