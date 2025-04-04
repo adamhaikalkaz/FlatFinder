@@ -45,7 +45,7 @@ export default function RegisterScreen() {
       navigation.navigate('LoginScreen'); // Replace 'Login' with your desired screen name
 
     } catch (error) {
-      Alert.alert('Registration Error', error.message);
+      Alert.alert('Registration Error', "There was an error creating your account. Please try again.");
     }
   };
 
