@@ -126,9 +126,6 @@ const PropertyScreen = ({ navigation, route }) => {
             </TouchableOpacity>
             {userRole === 'landlord' && (
             <View style={styles.headerRight}>
-                <TouchableOpacity>
-                <Ionicons name="pencil" size={24} color="green" />
-                </TouchableOpacity>
                 <TouchableOpacity onPress={deleteProperty}>
                 <Ionicons name="trash" size={24} color="red" />
                 </TouchableOpacity>
