@@ -156,10 +156,10 @@ const styles = StyleSheet.create({
     resizeMode: 'cover',
   },
   signInText: {
-    fontSize: 50,
+    fontSize: 40,
     fontWeight: '600',
     color: 'white',
-    marginTop: 12, // Adjust this value to move the text down
+    marginTop: 20, // Adjust this value to move the text down
   },
   headerContainer: {
     height: 180,

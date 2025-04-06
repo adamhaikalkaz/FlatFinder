@@ -16,8 +16,28 @@ export default function RegisterScreen() {
 
   const handleRegister = async () => {
     // Validate inputs
-    if (!firstName || !lastName || !email || !password || !confirmPassword) {
-      Alert.alert('Error', 'All fields are required');
+    if (!firstName.trim()) {
+      Alert.alert('Error', 'First Name is required');
+      return;
+    }
+  
+    if (!lastName.trim()) {
+      Alert.alert('Error', 'Last Name is required');
+      return;
+    }
+  
+    if (!email.trim()) {
+      Alert.alert('Error', 'Email is required');
+      return;
+    }
+  
+    if (!password.trim()) {
+      Alert.alert('Error', 'Password is required');
+      return;
+    }
+  
+    if (!confirmPassword.trim()) {
+      Alert.alert('Error', 'Confirm Password is required');
       return;
     }
 
