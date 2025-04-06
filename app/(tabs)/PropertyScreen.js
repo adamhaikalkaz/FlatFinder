@@ -23,6 +23,7 @@ const PropertyScreen = ({ navigation, route }) => {
   const propertyId = item.id;
 
   useEffect(() => {
+    console.log(userRole);
     checkWishlistStatus();
   }, []);
 
@@ -165,14 +166,15 @@ const PropertyScreen = ({ navigation, route }) => {
             <Text style={styles.infoText}>{Description}</Text>
             </View>
 
-        <TouchableOpacity
+        {userRole === "employee" && 
+        (<TouchableOpacity
           style={[styles.listingButtons, isWishlisted && styles.wishlistedButton]}
           onPress={handleWishlist}
         >
           <Text style={[styles.buttonText, isWishlisted && styles.wishlistedText]}>
             {isWishlisted ? 'Remove from Wishlist' : 'Save to Wishlist'}
           </Text>
-        </TouchableOpacity>
+        </TouchableOpacity>)}
 
         <TouchableOpacity
           style={styles.listingButtons}

@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { StatusBar, StyleSheet, Text, View, ScrollView, TouchableOpacity, Image } from 'react-native';
+import { StatusBar, StyleSheet, Text, View, ScrollView, TouchableOpacity, Image, Dimensions } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import { getFirestore, collection, getDocs, orderBy, query, where, limit, doc, getDoc } from 'firebase/firestore';
 import { db, auth, firestore } from './FirebaseConfig';
+
+const screenWidth = Dimensions.get('window').width;
 
 async function getReviews(propertyId: string, sortBy = "date_time_desc") {
   const db = getFirestore();
@@ -84,7 +86,7 @@ export default function ReviewScreen({ navigation, route }) {
   useEffect(() => {
     const getUserRole = async() => {
       const user = auth.currentUser; // Get the authenticated user
-      console.log("finding user roles........................................... "+ user.uid)
+      console.log("finding user roles "+ user.uid)
       
       if (user) {
         const userRef = doc(db,"user", user.uid)
@@ -93,7 +95,7 @@ export default function ReviewScreen({ navigation, route }) {
         if (userDoc.exists()) {
           const userData = userDoc.data();
           setUserRole(userData.user_type);
-          console.log(".........................user Role : "+ userRole);
+          console.log("user Role : "+ userRole);
         } else {
           console.log('No such user document!');
           console.log(userRole);
@@ -198,7 +200,7 @@ const styles = StyleSheet.create({
   mainContent: {
     paddingTop: 20,
     backgroundColor: '#f5f5f5',
-    width: '100%',
+    width: screenWidth,
   },
   ButtonContainer: {
     flexDirection: 'row',
