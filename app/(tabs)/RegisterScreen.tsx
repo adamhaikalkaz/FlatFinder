@@ -3,7 +3,8 @@ import { TextInput, TouchableOpacity, Text, View, StyleSheet, Alert, Image } fro
 import { auth, firestore, db } from './FirebaseConfig';
 import { useNavigation } from '@react-navigation/native';
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { doc, setDoc, getDoc } from "firebase/firestore";
+import { doc, setDoc } from "firebase/firestore";
+import { Ionicons } from '@expo/vector-icons';
 
 export default function RegisterScreen() {
   const [firstName, setFirstName] = useState('');
@@ -61,6 +62,9 @@ export default function RegisterScreen() {
 
   return (
     <View style={styles.background}>
+      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerLeft}>
+      <Ionicons name="arrow-back" size={24} color='#c6ff00' />
+      </TouchableOpacity>
       <View style={styles.overlay}>
         <View style={styles.container}>
           <Text style={styles.title}>Create Account</Text>
@@ -218,5 +222,14 @@ const styles = StyleSheet.create({
   bottomText: {
     fontSize: 18,
     color: '#333',
+  },
+  headerLeft: {
+    position: 'absolute',
+    top: 40,
+    left: 20,
+    zIndex: 1,
+    backgroundColor: '#2b2b2b',
+    padding: 10,
+    borderRadius: 50,
   },
 });

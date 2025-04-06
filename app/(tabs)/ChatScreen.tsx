@@ -32,6 +32,9 @@ import { auth, db } from './FirebaseConfig';
 import MessageBubble from '../../components/MessageBubble';
 import AudioRecorder from '../../components/AudioRecorder';
 import MediaPreview from '../../components/MediaPreview';
+import { Ionicons } from '@expo/vector-icons';
+import ContactsScreen from './ContactsScreen';
+import { useNavigation } from '@react-navigation/native';
 
 export default function ChatScreen({ route }) {
   const { chatId, receiverId, receiverName } = route.params;
@@ -44,6 +47,7 @@ export default function ChatScreen({ route }) {
   const [showPreviewModal, setShowPreviewModal] = useState(false);
   const soundRef = useRef(null);
   const flatListRef = useRef(null);
+  const navigation = useNavigation();
 
   useEffect(() => {
     const messagesRef = collection(db, `chats/${chatId}/messages`);
@@ -243,6 +247,9 @@ export default function ChatScreen({ route }) {
   
       {/* Header */}
       <Text style={styles.header}>{receiverName || 'Chat'}</Text>
+      <TouchableOpacity onPress={() => navigation.navigate(ContactsScreen)} style={styles.headerLeft}>
+      <Ionicons name="arrow-back" size={24} color='black' />
+      </TouchableOpacity>
   
       {/* Message List */}
       <FlatList
@@ -361,5 +368,11 @@ const styles = StyleSheet.create({
     fontSize: 13,
     color: '#555',
     fontWeight: '600',
+  },
+  headerLeft: {
+    position: 'absolute',
+    left: 10,
+    top: 60,
+    zIndex: 1,
   },
 });

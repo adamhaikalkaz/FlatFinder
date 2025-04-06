@@ -3,6 +3,7 @@ import { StatusBar, StyleSheet, Text, View, ScrollView, TouchableOpacity, Image,
 import { Picker } from '@react-native-picker/picker';
 import { getFirestore, collection, getDocs, orderBy, query, where, limit, doc, getDoc } from 'firebase/firestore';
 import { db, auth, firestore } from './FirebaseConfig';
+import { Ionicons } from '@expo/vector-icons';
 
 const screenWidth = Dimensions.get('window').width;
 
@@ -120,6 +121,9 @@ export default function ReviewScreen({ navigation, route }) {
   return (
     <View style={styles.container}>
       <View style={styles.bottomContainer}>
+        <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerLeft}>
+        <Ionicons name="arrow-back" size={24} color='black' />
+        </TouchableOpacity>
         <Image source={require("../../assets/images/FDM.png")} style={styles.bottomImage} />
         <Text style={styles.bottomText}>Flat Finder</Text>
       </View>
@@ -281,5 +285,10 @@ const styles = StyleSheet.create({
     fontSize: 16,
     textAlign: 'center',
     marginTop: 20,
+  },
+  headerLeft: {
+    position: 'absolute',
+    top: 15,
+    left: 20,
   }
 });
