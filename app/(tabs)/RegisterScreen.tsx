@@ -51,7 +51,11 @@ export default function RegisterScreen() {
       navigation.navigate('LoginScreen'); // Replace 'Login' with your desired screen name
 
     } catch (error) {
-      Alert.alert('Registration Error', "There was an error creating your account. Please try again.");
+      if (error.code === 'auth/email-already-in-use') {
+        Alert.alert('Registration Error', 'This email is already registered. Please use a different email or login.');
+      } else {
+        Alert.alert('Registration Error', "There was an error creating your account. Please try again.");
+      }
     }
   };
 
