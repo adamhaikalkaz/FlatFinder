@@ -37,7 +37,6 @@ export default function LoginScreen({ navigation, setIsAuthenticated }) {
       // Set authentication state to true
       setIsAuthenticated(true);
     } catch (error) {
-      console.error('Login error:', "Wrong Email or Password");
       Alert.alert('Login Error', "Wrong Email or Password");
     }
   };
@@ -160,7 +159,7 @@ const styles = StyleSheet.create({
     fontSize: 50,
     fontWeight: '600',
     color: 'white',
-    marginTop: 25, // Adjust this value to move the text down
+    marginTop: 12, // Adjust this value to move the text down
   },
   headerContainer: {
     height: 180,
