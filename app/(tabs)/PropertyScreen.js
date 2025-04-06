@@ -176,12 +176,13 @@ const PropertyScreen = ({ navigation, route }) => {
           </Text>
         </TouchableOpacity>)}
 
-        <TouchableOpacity
+      {userRole === "employee" &&  
+      (<TouchableOpacity
           style={styles.listingButtons}
           onPress={handleChatWithLandlord}
         >
           <Text>Chat to Landlord</Text>
-        </TouchableOpacity>
+        </TouchableOpacity>)}
 
             <TouchableOpacity
             style={styles.listingButtons}
