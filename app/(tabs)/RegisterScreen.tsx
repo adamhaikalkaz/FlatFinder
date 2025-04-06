@@ -3,7 +3,7 @@ import { TextInput, TouchableOpacity, Text, View, StyleSheet, Alert, Image } fro
 import { auth, firestore, db } from './FirebaseConfig';
 import { useNavigation } from '@react-navigation/native';
 import { createUserWithEmailAndPassword } from "firebase/auth";
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc } from "firebase/firestore";
 
 export default function RegisterScreen() {
   const [firstName, setFirstName] = useState('');
@@ -15,6 +15,12 @@ export default function RegisterScreen() {
   const navigation = useNavigation();
 
   const handleRegister = async () => {
+    // Validate inputs
+    if (!firstName || !lastName || !email || !password || !confirmPassword) {
+      Alert.alert('Error', 'All fields are required');
+      return;
+    }
+
     if (password !== confirmPassword) {
       Alert.alert('Error', 'Passwords do not match');
       return;
