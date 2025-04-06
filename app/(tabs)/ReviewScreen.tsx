@@ -138,7 +138,9 @@ export default function ReviewScreen({ navigation, route }) {
 
         {showSort && <SortDropdown onSortChange={handleSortChange} />}
 
-        {reviews.map((review) => (
+        {reviews.length === 0 ? (
+            <Text style={styles.noReviews}>No reviews available for this property.</Text>
+        ):(reviews.map((review) => (
           <View key={review.id}>
             <View style={styles.review}>
               <View style={styles.reviewHeader}>
@@ -161,7 +163,7 @@ export default function ReviewScreen({ navigation, route }) {
               <Text style={styles.reviewText}>{review.review || "No review provided."}</Text>
             </View>
           </View>
-        ))}
+        )))}
       </ScrollView>
       <StatusBar style="auto" />
       </View>
@@ -274,4 +276,10 @@ const styles = StyleSheet.create({
     fontSize: 18,
     color: '#333',
   },
+  noReviews: {
+    color: 'black',
+    fontSize: 16,
+    textAlign: 'center',
+    marginTop: 20,
+  }
 });
