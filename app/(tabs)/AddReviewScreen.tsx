@@ -15,59 +15,54 @@ export default function AddReviewScreen({ navigation, route }) {
   const db = getFirestore()
   const auth = getAuth()
 
-  const handleSubmit = async() => {
-    
-    
+  const handleSubmit = async () => {
     const user = auth.currentUser;
-    
-    if (!user)
-    {
-      alert("user not logged in");
+  
+    if (!user) {
+      alert("User not logged in");
       return;
     }
-    
+  
     const user_ID = user.uid;
-    //const user_ID = "EXAMPLE USER";
     const numericRating = Number(rating);
-
+  
     if (!rating || !reviewText.trim()) {
       Alert.alert('Missing Information', 'Please fill in all fields.');
       return;
     }
-
-    
+  
     if (isNaN(numericRating) || numericRating < 1 || numericRating > 5) {
       Alert.alert('Invalid Rating', 'Please enter a number between 1 and 5.');
       return;
     }
-
-    
+  
     if (reviewText.trim().length < 30) {
-        Alert.alert('Short Review', 'Your review must be at least 30 characters long.');
-        return;
-      }
-
-      try {
-        const now = new Date();
-        const docRef = await setDoc(doc(db, "reviews", user_ID), { //addDoc will create a unique id like uZx8yT4skiC0U7bySsNR 
-          date_time: Timestamp.now(), 
-          property_id: propertyId, 
-          rating: rating, 
-          review: reviewText, 
-          user_ID: user_ID, 
-        });
-    
-
-        //console.log("Listing added with ID: ", docRef.id);
-        setRating("")
-        setReviewText("")
-        console.log({ rating: numericRating, location, reviewText, propertyId });
-        Alert.alert('Review Submitted!', 'Thank you for your feedback.');
-        navigation.navigate("ReviewScreen", {propertyId}); 
-      } catch (error) {
-        console.error("Error adding document: ", error);
-      }
-
+      Alert.alert('Short Review', 'Your review must be at least 30 characters long.');
+      return;
+    }
+  
+    try {
+      const now = new Date();
+      const reviewRef = doc(collection(db, "reviews")); // Generate a unique review ID
+      const review_id = reviewRef.id; // Get the generated review ID
+  
+      await setDoc(reviewRef, {
+        review_id: review_id, // Save the review ID in the document
+        date_time: Timestamp.now(),
+        property_id: propertyId,
+        rating: numericRating,
+        review: reviewText,
+        user_ID: user_ID,
+      });
+  
+      setRating("");
+      setReviewText("");
+      console.log({ review_id, rating: numericRating, reviewText, propertyId });
+      Alert.alert('Review Submitted!', 'Thank you for your feedback.');
+      navigation.navigate("ReviewScreen", { propertyId });
+    } catch (error) {
+      console.error("Error adding document: ", error);
+    }
   };
 
   return (
