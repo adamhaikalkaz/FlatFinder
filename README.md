@@ -1,4 +1,6 @@
-# Welcome to your Expo app 👋
+# Flat Finder 👋
+
+Flat Finder is a mobile application prototype designed to help FDM employers to find suitable accomodation when going to work abroad for an extended period of time. It allows landlords to upload properties and the employers to view them with a range of functionalities included.
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
