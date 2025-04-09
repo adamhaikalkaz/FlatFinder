@@ -22,6 +22,8 @@ const PropertyScreen = ({ navigation, route }) => {
   const images = item.images;
   const propertyId = item.id;
 
+  const [activeIndex, setActiveIndex] = useState(0);
+
   useEffect(() => {
     console.log(userRole);
     checkWishlistStatus();
@@ -148,7 +150,28 @@ const PropertyScreen = ({ navigation, route }) => {
             snapToAlignment="center"
             snapToInterval={width}
             decelerationRate="fast"
+            onScroll={e => {
+              const index = Math.round(e.nativeEvent.contentOffset.x / width);
+              setActiveIndex(index);
+            }}
+            scrollEventThrottle={16}
             />
+
+            {/* Image dots */}
+            <View style={{ flexDirection: 'row', justifyContent: 'center', marginTop: -20, marginBottom: 10 }}>
+              {images.map((_, index) => (
+                <View
+                  key={index}
+                  style={{
+                    width: 8,
+                    height: 8,
+                    borderRadius: 4,
+                    backgroundColor: index === activeIndex ? '#333' : '#ccc',
+                    marginHorizontal: 4,
+                  }}
+                />
+              ))}
+            </View>
 
             <View style={styles.propertyDetails}>
             <Text style={styles.address}>{Address}, {City}</Text>
@@ -161,8 +184,9 @@ const PropertyScreen = ({ navigation, route }) => {
 
             <View style={styles.propertyInfo}>
             <Text style={styles.sectionTitle}>Property Details</Text>
-            <Text style={styles.infoText}><Text style={styles.boldText}>Type:</Text> {Type}</Text>
-            <Text style={styles.infoText}><Text style={styles.boldText}>Bedrooms:</Text> {Beds}</Text>
+            <Text style={styles.infoText}><Text style={styles.boldText}>Type:</Text> {Type} </Text>
+            <Text style={styles.infoText}><Text style={styles.boldText}>Bedrooms:</Text> {Beds} </Text>
+            <Text style={styles.infoText}><Text style={styles.boldText}>Bathrooms:</Text> 1 </Text>
             <Text style={styles.infoText}>{Description}</Text>
             </View>
 
