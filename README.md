@@ -2,9 +2,13 @@
 
 Flat Finder is a mobile application prototype designed to help FDM employers to find suitable accomodation when going to work abroad for an extended period of time. It allows landlords to upload properties and the employers to view them with a range of functionalities included.
 
-Main Features:
+## Main Features:
 
-
+- Login: FDM employers are giving logins with which they are able to login and landlords can register with their own details and login
+- Listing and Previewing: Landlords can list properties that they would like to rent out with different information about the property and can preview how it will look on the website before posting it.
+- Searching and filtering: Employers can search for different properties and filter them based on their needs.
+- Reviews: Employers can post reviews which others may view with a rating and an explanation.
+- Chat: Users are able to chat with eachother, searching for the users they want to chat with and can upload images, videos and voice recordings.
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
