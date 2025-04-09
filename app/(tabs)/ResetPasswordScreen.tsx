@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import { auth } from './FirebaseConfig';
 import { sendPasswordResetEmail } from 'firebase/auth';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function ResetPasswordScreen({ navigation }) {
   const [email, setEmail] = useState('');
@@ -35,6 +36,9 @@ export default function ResetPasswordScreen({ navigation }) {
           style={styles.topImage}
         />
       </View>
+      <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerLeft}>
+      <Ionicons name="arrow-back" size={24} color='#c6ff00' />
+      </TouchableOpacity>
       <View style={styles.headerTextContainer}>
         <Text style={styles.resetPasswordText}>Reset Password</Text>
         <Text style={styles.instructionsText}>
@@ -147,5 +151,14 @@ const styles = StyleSheet.create({
   bottomText: {
     fontSize: 18,
     color: '#333',
+  },
+  headerLeft: {
+    position: 'absolute',
+    top: 40,
+    left: 20,
+    zIndex: 1,
+    backgroundColor: '#2b2b2b',
+    padding: 10,
+    borderRadius: 50,
   },
 });

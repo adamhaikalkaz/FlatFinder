@@ -7,6 +7,9 @@ import Slider from "@react-native-community/slider";
 import { Picker } from '@react-native-picker/picker';
 import { auth, db } from './FirebaseConfig';
 import { collection, doc, getDoc, onSnapshot } from 'firebase/firestore';
+import { Platform } from 'react-native'
+import { SafeAreaView } from 'react-native';
+import { TouchableWithoutFeedback } from 'react-native';
 
 export default function HomeScreen() {
   const [search, setSearch] = useState('');
@@ -31,6 +34,9 @@ export default function HomeScreen() {
 
   const [selectedSortOption, setSelectedSortOption] = useState("default"); // Default sort option is 'None'
   const [appliedSortOption, setAppliedSortOption] = useState("default"); // Store the applied sort option
+
+  const [showIOSPicker, setShowIOSPicker] = useState(false);
+  const [iOSLabel, setiOSLabel] = useState("None");
 
   const filterButtonStyle = appliedPriceRange === null ? styles.FilterSortButtonsNotApplied : styles.FilterSortButtonsApplied;
   const filterLabelStyle = appliedPriceRange === null ? styles.FilterSortButtonLabelsNotApplied : styles.FilterSortButtonLabelsApplied;
@@ -132,6 +138,21 @@ export default function HomeScreen() {
     setModalVisible(false); // Close the modal without applying changes
   };
 
+    // Map the value to the label
+    const labelMapping = {
+      default: 'None',
+      priceAsc: 'Price: Low to high',
+      priceDesc: 'Price: High to low',
+      bedrooms: 'Number of Bedrooms',
+      rental_duration: 'Rental Duration',
+    };
+  
+    const handlePickerChange = (itemValue) => {
+      setSelectedSortOption(itemValue);
+      // Update the label based on the selected value
+      setiOSLabel(labelMapping[itemValue]);
+    };
+
   const handleApplySort = () => {
     setAppliedSortOption(selectedSortOption); // Update the applied sort option
     setModalVisible2(false); // Close the modal after applying the sort option
@@ -141,6 +162,7 @@ export default function HomeScreen() {
   
   const handleCancelSort = () => {
     setSelectedSortOption(appliedSortOption); // Reset to the previous applied option
+    setiOSLabel(labelMapping[appliedSortOption])
     setModalVisible2(false); // Close the modal without applying changes
     //console.log(`CANCELLED, SELECT SET TO: ${selectedSortOption}`);
   };
@@ -148,6 +170,7 @@ export default function HomeScreen() {
   const handleClearSort = () => {
     setSelectedSortOption("default");
     setAppliedSortOption("default");
+    setiOSLabel("None");
 
     setModalVisible2(false); // Close the modal without applying changes
   };
@@ -294,44 +317,91 @@ export default function HomeScreen() {
           </View>
         </Modal>
 
-        {/* Modal for Filter Options */}
+        {/* Modal for Sort Options */}
         <Modal visible={modalVisible2} animationType="slide" transparent>
-        <View style={styles.modalOverlay}>
+          <View style={styles.modalOverlay}>
             <View style={styles.modalContainer}>
               <Text style={styles.title2}>Sort By</Text>
-        
-              {/* Dropdown for sorting options */}
-              <Picker
-                selectedValue={selectedSortOption}
-                onValueChange={(value) => setSelectedSortOption(value)}  // Update selected option
-                style={{
-                  height: 60,
-                  borderColor: '#ccc',
-                  borderWidth: 1,
-                  borderRadius: 5,
-                  marginBottom: 10,
-                }}
-              >
-                <Picker.Item label="Price: Low to high" value="priceAsc" />
-                <Picker.Item label="Price: High to low" value="priceDesc" />
-                <Picker.Item label="Number of Bedrooms" value="bedrooms" />
-                <Picker.Item label="Rental Duration" value="rental_duration" />
-              </Picker>
+
+
+              {/* iOS picker button */}
+              {Platform.OS === 'ios' ? (
+                <>
+                  <TouchableOpacity
+                    style={styles.iosButton}
+                    onPress={() => setShowIOSPicker(true)}
+                  >
+                    <Text style={{ color: '#101010' }}>{iOSLabel}</Text>
+                  </TouchableOpacity>
+
+                  {/* iOS sub-modal for Picker */}
+                  {showIOSPicker && (
+                    <Modal visible={showIOSPicker} animationType="slide" transparent>
+                      <View style={styles.iosPickerContainer}>
+                        <SafeAreaView style={styles.iosPickerInner}>
+                          <Picker
+                            selectedValue={selectedSortOption}
+                            style={{ height: 200, width: '100%' }} // 👈 Add this!
+                            onValueChange={handlePickerChange}
+                            
+                          >
+                            <Picker.Item label="None" value="default" color="#000" />
+                            <Picker.Item label="Price: Low to high" value="priceAsc" color="#000" />
+                            <Picker.Item label="Price: High to low" value="priceDesc" color="#000" />
+                            <Picker.Item label="Number of Bedrooms" value="bedrooms" color="#000" />
+                            <Picker.Item label="Rental Duration" value="rental_duration" color="#000" />
+                          </Picker>
+                          <TouchableOpacity
+                            style={styles.buttonStyle}
+                            onPress={() => setShowIOSPicker(false)}  // Action when button is pressed
+                          >
+                            <Text style={styles.iosButtonText}>Done</Text>
+                          </TouchableOpacity>
+                        </SafeAreaView>
+                      </View>
+                    </Modal>
+                  )}
+                </>
+              ) : null}
+
+              {/* Android picker */}
+              {Platform.OS === 'android' ? (
+                <Picker
+                  selectedValue={selectedSortOption}
+                  onValueChange={(value) => setSelectedSortOption(value)}  // Update selected option
+                  style={{
+                    height: 60,
+                    borderColor: '#ccc',
+                    borderWidth: 1,
+                    borderRadius: 5,
+                    marginBottom: 10,
+                  }}
+                >
+                  <Picker.Item label="None" value="default" />
+                  <Picker.Item label="Price: Low to high" value="priceAsc" />
+                  <Picker.Item label="Price: High to low" value="priceDesc" />
+                  <Picker.Item label="Number of Bedrooms" value="bedrooms" />
+                  <Picker.Item label="Rental Duration" value="rental_duration" />
+                </Picker>
+              ) : null}
 
               {/* Buttons */}
-              <Button labelStyle={styles.clearFiltersLabel} mode="outlined" onPress={() => {handleClearSort()}}>
-                  Clear Sort
+              <Button labelStyle={styles.clearFiltersLabel} mode="outlined" onPress={handleClearSort}>
+                Clear Sort
               </Button>
+
               <View style={styles.buttonRow}>
-              <Button labelStyle={styles.cancelButtonLabel} mode="outlined" onPress={() => {handleCancelSort()}}>
-                Cancel
-              </Button>
-              <Button
-                labelStyle={styles.applyButtonLabel}
-                style={styles.applyButton}
-                mode="contained" onPress={() => {handleApplySort()}}>
-                Apply
-              </Button>
+                <Button labelStyle={styles.cancelButtonLabel} mode="outlined" onPress={handleCancelSort}>
+                  Cancel
+                </Button>
+                <Button
+                  labelStyle={styles.applyButtonLabel}
+                  style={styles.applyButton}
+                  mode="contained"
+                  onPress={handleApplySort}
+                >
+                  Apply
+                </Button>
               </View>
             </View>
           </View>
@@ -356,15 +426,44 @@ export default function HomeScreen() {
                         resizeMode="cover"
                     />
                     <View style={styles.propertyInfoContainer}>
-                      <Text style={styles.propertyInfo1}>{item.Address}, {item.City} </Text>
-                      <Text style={[styles.propertyInfo1, { fontSize: 16 }]}>£{item.Rent} pcm </Text>
+                      {/* Address and City */}
+                      <Text 
+                        style={[styles.propertyInfo1, { flex: 1 }]} // Allow the address to take up available space
+                        numberOfLines={1}          // Limit to a single line
+                        ellipsizeMode="tail"       // Show ellipsis at the end if text overflows
+                      >
+                        {item.Address}, {item.City}
+                      </Text>
+
+                      {/* Rent */}
+                      <Text 
+                        style={[styles.propertyInfo1, { fontSize: 16, flexShrink: 0 }]} // Keep the rent text fixed width
+                        numberOfLines={1}          // Limit to a single line
+                        ellipsizeMode="tail"       // Show ellipsis at the end if text overflows
+                      >
+                        £{item.Rent} pcm
+                      </Text>
                     </View>
-                    <View style={styles.propertyInfo2}>
-                      <Image source={require('../../assets/images/bed.png')} style={{ width: 30, height: 30 }} />
-                      <Text style={{fontSize: 15, paddingTop: 5, paddingLeft: 5,}}>{item.Beds} Beds</Text>
-                      {/*<Image source={require('./assets/bathroom.png')} style={{ width: 30, height: 30 }} />
-                      <Text style={{fontSize: 20, paddingLeft: 10, paddingRight: 10}}>1 bath</Text>*/}
+
+                    <View style={styles.propertyInfo2Vertical}>
+                      <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 10 }}>
+                        <Image source={require('../../assets/images/bed.png')} style={{ width: 30, height: 30 }} />
+                        <Text style={{ fontSize: 15, marginLeft: 5 }}>{item.Beds} Beds </Text>
+                      </View>
+
+                      <View style={{ flexDirection: 'row', alignItems: 'center', paddingBottom: 4 }}>
+                        <Image source={require('../../assets/images/bathroom.png')} style={{ width: 22, height: 22, marginLeft: 4}} />
+                        <Text style={{ fontSize: 15, marginLeft: 5, marginTop: 2 }}> 1 Bath    </Text>
+                      </View>
+
+                      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <Image source={require('../../assets/images/clock.png')} style={{ width: 22, height: 22, marginLeft: 5, marginTop: 4 }} />
+                        <Text style={{ fontSize: 15, marginLeft: 10}}>{item.RentalDuration} months </Text>
+                      </View>
                     </View>
+
+
+
                 </TouchableOpacity>
             )}
         />)}
@@ -534,9 +633,10 @@ const styles = StyleSheet.create({
 
   propertyInfoContainer: {
     flexDirection: 'row',             // Align text components horizontally (side by side)
-    justifyContent: 'space-between',  // Space the address and price out (left and right)
+    justifyContent: 'flex-start',     // Keep the address and price aligned
     alignItems: 'center',             // Vertically center the items
     paddingVertical: 10,
+    width: '100%',                    // Ensure the container takes up full width of the parent
   },
   propertyInfo1: {
     fontSize: 20,                     // Default font size for address and city
@@ -544,8 +644,14 @@ const styles = StyleSheet.create({
     color: 'black',
   },
 
-  propertyInfo2: {
+  propertyInfo2: { //For aligning horizontally
     flexDirection: 'row',             // Align text components horizontally (side by side)
+    fontSize: 20,                     // Default font size for address and city
+    fontWeight: 'bold',
+    color: 'black',
+  },
+
+  propertyInfo2Vertical: { //For aligning vertically
     fontSize: 20,                     // Default font size for address and city
     fontWeight: 'bold',
     color: 'black',
@@ -554,5 +660,58 @@ const styles = StyleSheet.create({
     fontSize: 18, 
     textAlign: 'center', 
     marginTop: 20
-  }
+  },
+
+  iosButton: {
+    backgroundColor: '#D1D1D1',
+    paddingVertical: 12,
+    paddingHorizontal: 16,
+    borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginBottom: 20,
+  },
+
+  iosPickerContainer: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    backgroundColor: 'rgba(0,0,0,0.4)',
+  },
+
+  iosPickerInner: {
+    backgroundColor: '#fff',
+    paddingTop: 20,
+    paddingBottom: 30,
+    paddingHorizontal: 20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
+    minHeight: 250, // 👈 Add this to ensure enough space for the picker
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: -3 },
+    shadowOpacity: 0.2,
+    shadowRadius: 6,
+    elevation: 10,
+  },
+
+  label: {
+    fontSize: 16,
+    color: '#101010',
+    textAlign: 'center',
+  },
+
+  buttonStyle: {
+    backgroundColor: '#FFFFFF',  // White background
+    paddingVertical: 12,         // Vertical padding for button height
+    paddingHorizontal: 20,       // Horizontal padding for button width
+    borderRadius: 10,             // No rounded corners for a rectangular button
+    alignSelf: 'center',         // Center the button horizontally
+    marginTop: 10,               // Space above the button
+    borderWidth: 1,              // Optional: Add border to make it more defined
+    borderColor: '#000000',      // Black border to match text color
+  },
+  iosButtonText: {
+    color: '#000000',            // Black text
+    fontSize: 16,                // Text size
+    textAlign: 'center',         // Center the text horizontally
+  },
 });
