@@ -134,7 +134,7 @@ export default function UserScreen({ setIsAuthenticated }) {
         <TouchableOpacity style={styles.button}>
           <Text style={styles.buttonText}>Give us feedback</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
+        <TouchableOpacity style={styles.button} onPress={handleLogout}>
           <Text style={styles.buttonText}>Log Out</Text>
         </TouchableOpacity>
       </ScrollView>
