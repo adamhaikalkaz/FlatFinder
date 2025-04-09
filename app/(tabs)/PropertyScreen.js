@@ -118,15 +118,11 @@ const PropertyScreen = ({ navigation, route }) => {
   return (
     <SafeAreaView edges={['left', 'right', 'bottom']} style={{ flex: 1 }}>
         <View style={styles.banner}>
+            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerLeft}>
+            <Ionicons name="arrow-back" size={24} color='black' />
+            </TouchableOpacity>
             <Image source={require("../../assets/images/FDM.png")} style={styles.bannerImage} />
             <Text style={styles.bannerText}>Flat Finder</Text>
-        </View>
-    
-      <View style={styles.container}>
-        <View style={styles.header}>
-            <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerLeft}>
-            <Ionicons name="arrow-back" size={24} color="black" />
-            </TouchableOpacity>
             {userRole === 'landlord' && (
             <View style={styles.headerRight}>
                 <TouchableOpacity onPress={deleteProperty}>
@@ -136,7 +132,7 @@ const PropertyScreen = ({ navigation, route }) => {
             )}
         </View>
 
-        <ScrollView showsVerticalScrollIndicator={false}>
+        <ScrollView showsVerticalScrollIndicator={false} style={styles.container}>
             <FlatList
             data={images}
             horizontal
@@ -214,8 +210,8 @@ const PropertyScreen = ({ navigation, route }) => {
             >
             <Text>Reviews</Text>
             </TouchableOpacity>
-            </ScrollView>
-        </View>
+          </ScrollView>
+
     </SafeAreaView>
   );
 };
@@ -262,6 +258,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
     borderWidth: 1,
     backgroundColor: '#fff',
+    marginBottom: 20,
   },
   wishlistedButton: {
     backgroundColor: '#d32f2f',
@@ -282,13 +279,15 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
-  headerLeft : {
-    marginLeft: 15
+  headerLeft: {
+    position: 'absolute',
+    top: 15,
+    left: 20,
   },
   headerRight: {
-    flexDirection: 'row',
-    gap: 20,
-    marginRight: 15,
+    position: 'absolute',
+    top: 15,
+    right: 20,
   },
   header: {
     flexDirection: 'row',
