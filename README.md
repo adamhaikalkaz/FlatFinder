@@ -12,6 +12,12 @@ Flat Finder is a mobile application prototype designed to help FDM employers to 
 
 This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
 
+## Prerequesites:
+
+- Download Expo go on mobile
+- Node.js is installed]
+- JavaScript/typescript to run in react native
+
 ## Get started
 
 1. Clone the repo
@@ -31,6 +37,7 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
    ```bash
     npx expo start
    ```
+
 
 In the output, you'll find options to open the app in a
 
