@@ -14,10 +14,10 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 
 ## Get started
 
-1. Clone the Repo
+1. Clone the repo
 
    ```bash
-   git clone
+   git clone https://github.com/ec23064/FlatFinder.git
    ```
 
 2. Install dependencies
