@@ -15,7 +15,7 @@ This is an [Expo](https://expo.dev) project created with [`create-expo-app`](htt
 ## Prerequesites:
 
 - Download Expo go on mobile
-- Node.js is installed]
+- Node.js is installed
 - JavaScript/typescript to run in react native
 
 ## Get started
